@@ -1,12 +1,12 @@
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { collection, getFirestore, query, where } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import { useCollection } from 'react-firebase-hooks/firestore';
 
-import { Meta } from '@/layout/Meta';
-import { InvestorLayout } from '@/templates/InvestorLayout';
+import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
-function Investor() {
+export default withPageAuthRequired(function Investor() {
   const router = useRouter();
   const [companies, loading, error] = useCollection(
     query(
@@ -16,15 +16,7 @@ function Investor() {
   );
 
   return (
-    <InvestorLayout
-      investors={false}
-      meta={
-        <Meta
-          title="Star Tub"
-          description="One-stop-shop for your startup needs"
-        />
-      }
-    >
+    <DashboardLayout type={LayoutType.investor}>
       <div className="flex">
         {error && <strong>Error: {JSON.stringify(error)}</strong>}
         {loading && <span>Collection: Loading...</span>}
@@ -40,8 +32,6 @@ function Investor() {
           </button>
         ))}
       </div>
-    </InvestorLayout>
+    </DashboardLayout>
   );
-}
-
-export default Investor;
+});

@@ -33,3 +33,5 @@ local
 
 # vercel
 .vercel
+sendgrid.env
+sendgrid.env

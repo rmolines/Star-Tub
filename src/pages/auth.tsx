@@ -92,7 +92,7 @@ function SignInScreen() {
           <div className="text-sm text-slate-400">or</div>
           <div className="mr-4 ml-2 w-full border-b-1 border-slate-400" />
         </div>
-
+        <a href="/api/auth/login">Login</a>
         {/* <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth(app)} /> */}
         <div className="my-4 flex cursor-pointer items-center justify-center rounded border-1 border-slate-600 py-1 text-center">
           <div className="flex items-center text-slate-600">

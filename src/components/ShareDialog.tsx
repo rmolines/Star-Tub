@@ -1,4 +1,5 @@
 import { Dialog } from '@headlessui/react';
+import { Dispatch, SetStateAction } from 'react';
 import { BiCopy } from 'react-icons/bi';
 
 import MainButton from './MainButton';
@@ -8,6 +9,7 @@ export function ShareDialog(props: {
   setIsOpen: (arg0: boolean) => void;
   setEmail: (arg0: string) => void;
   createLink: () => void;
+  setCreatedLink: Dispatch<SetStateAction<boolean>>;
   createdLink: any;
   link: string;
 }) {
@@ -23,7 +25,7 @@ export function ShareDialog(props: {
       {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
         {/* The actual dialog panel  */}
-        <Dialog.Panel className="flex flex-col rounded-lg border-1 border-slate-500 bg-white p-8 text-sm font-semibold text-slate-700 shadow-xl">
+        <Dialog.Panel className="flex flex-col rounded-lg border-3 border-slate-300 bg-white p-8 text-sm font-semibold text-slate-700 shadow-xl">
           <Dialog.Title className="flex items-center">
             Compartilhar Q&A
           </Dialog.Title>
@@ -31,7 +33,7 @@ export function ShareDialog(props: {
             <input
               type="email"
               placeholder={'Digite o e-mail...'}
-              className="rounded border-2 border-slate-300 py-2 pr-32 pl-2"
+              className="rounded border-2 border-slate-300 py-2 pl-2"
               onChange={(event) => props.setEmail(event.target.value)}
             />
             <MainButton onClick={props.createLink} />
@@ -41,6 +43,7 @@ export function ShareDialog(props: {
               className="flex cursor-pointer items-center justify-start"
               onClick={() => {
                 navigator.clipboard.writeText(props.link);
+                props.setCreatedLink(false);
               }}
             >
               <span className="mr-1 text-ellipsis text-sm font-normal text-blue-700">

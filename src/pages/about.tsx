@@ -1,5 +1,5 @@
 import { Meta } from '@/layout/Meta';
-import { FounderLayout } from '@/templates/FounderLayout';
+import { FounderLayout } from '@/templates/DashboardLayout';
 
 const About = () => (
   <FounderLayout meta={<Meta title="Lorem ipsum" description="Lorem ipsum" />}>

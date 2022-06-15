@@ -1,5 +1,6 @@
 import { deleteDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
+import dynamic from 'next/dynamic';
 // Import React dependencies.
 import React, { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -7,7 +8,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import Card from './Card';
 import CardFooter from './CardFooter';
 import CardHeader from './CardHeader';
-import Editor from './Editor';
+
+const Editor = dynamic(() => import('./Editor'), {
+  ssr: false,
+});
 
 type Props = {
   question: String;
@@ -41,7 +45,7 @@ const EditingBox = (props: Props) => {
     <Card>
       <CardHeader>
         <TextareaAutosize
-          className={`w-full border-b-1 pb-2 border-slate-300 bg-slate-100 text-sm font-semibold text-slate-800`}
+          className={`w-full border-b-1 pb-2 border-slate-300 bg-slate-100 text-sm font-semibold text-slate-800 border-0`}
           defaultValue={`${props.question}`}
           onChange={(e) => {
             setQuestion(e.target.value);

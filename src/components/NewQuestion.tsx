@@ -2,9 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
-  submitFunc: (question: String, uid: string) => Promise<void>;
+  submitFunc: (question: String) => Promise<void>;
   cancelFunc: Dispatch<SetStateAction<boolean>>;
-  uid: string;
 };
 
 const NewQuestion = (props: Props) => {
@@ -40,7 +39,7 @@ const NewQuestion = (props: Props) => {
         </button>
         <button
           className="ml-2 rounded-md bg-slate-400 px-2 py-1 text-slate-50"
-          onClick={() => props.submitFunc(question, props.uid)}
+          onClick={() => props.submitFunc(question)}
         >
           Enviar
         </button>

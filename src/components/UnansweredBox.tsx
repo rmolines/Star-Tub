@@ -1,11 +1,15 @@
 import { deleteDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
+import dynamic from 'next/dynamic';
 // Import React dependencies.
 import React, { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import Editor from './Editor';
 import { QuestionMenu } from './QuestionMenu';
+
+const Editor = dynamic(() => import('./Editor'), {
+  ssr: false,
+});
 
 type Props = {
   question: String;
@@ -36,7 +40,7 @@ const UnansweredBox = (props: Props) => {
         <div className="flex items-center justify-between rounded-t-lg border-b-1 border-slate-500 bg-slate-100 py-2 px-4">
           <TextareaAutosize
             readOnly
-            className="w-full resize-none bg-slate-100 pt-1 text-sm font-bold text-slate-700 outline-none"
+            className="w-full resize-none border-0 bg-slate-100 pt-1 text-sm font-bold text-slate-700 outline-none"
             defaultValue={`${props.index + 1}. ${props.question}`}
           />
           <QuestionMenu
@@ -49,7 +53,10 @@ const UnansweredBox = (props: Props) => {
         </div>
         <div className={'rounded-b-lg bg-white p-6'}>
           <Editor
-            onChange={(value) => setAnswer(value)}
+            onChange={(value) => {
+              setAnswer(value);
+              setShowSendButton(true);
+            }}
             unanswered
             data={props.answer}
           />

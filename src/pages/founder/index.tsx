@@ -1,4 +1,4 @@
-import { getAuth } from '@firebase/auth';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   addDoc,
   collection,
@@ -11,7 +11,6 @@ import {
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { BsPlusCircle } from 'react-icons/bs';
 import { uuid } from 'uuidv4';
@@ -19,69 +18,30 @@ import { uuid } from 'uuidv4';
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
 import ShareIcon from '@/components/ShareIcon';
-import { FounderLayout } from '@/templates/FounderLayout';
+import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 import { ShareDialog } from '../../components/ShareDialog';
 
-function FounderPage() {
+export default withPageAuthRequired(function Founder() {
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [unansweredQuestions, setUnansweredQuestions] = useState([]);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
-  const [user] = useAuthState(getAuth(app));
-  const [userInfo] = useDocument(
-    doc(getFirestore(app), 'users', user !== null ? user.uid : 'qwer')
-  );
-  const [createdLink, setCreatedLink] = useState(false);
   const [link, setLink] = useState('');
+  const [createdLink, setCreatedLink] = useState(false);
+  const { user, error, isLoading } = useUser();
 
-  const [value, loading, error] = useCollection(
+  const [userInfo] = useDocument(
+    doc(getFirestore(app), 'users', user !== undefined ? user?.sub : 'qwer')
+  );
+
+  const [value, loading] = useCollection(
     query(
       collection(getFirestore(app), 'questions'),
-      where('companyId', '==', user ? user?.uid : '')
+      where('companyId', '==', userInfo ? userInfo.data().companyId : 'aa')
     )
   );
-
-  const createQuestion = async (question: String, uid: string) => {
-    const res = await addDoc(collection(getFirestore(app), 'questions'), {
-      question,
-      answer: '',
-      companyId: uid,
-    });
-    console.log(res.id);
-    setCreatingQuestion(false);
-  };
-
-  const createLink = async () => {
-    const links = await getDocs(
-      query(
-        collection(getFirestore(app), 'emailsShared'),
-        where('uid', '==', user?.uid),
-        where('email', '==', email.toLowerCase())
-      )
-    );
-
-    if (links && links.docs.length > 0) {
-      setLink(`http://localhost:3000/invitation/${userInfo?.data().linkId}`);
-    } else {
-      await addDoc(collection(getFirestore(app), 'emailsShared'), {
-        uid: user?.uid,
-        email: email.toLowerCase(),
-      });
-      let linkId = '';
-      if (!userInfo?.data().linkId) {
-        linkId = uuid();
-        await updateDoc(doc(getFirestore(app), 'users', user?.uid), {
-          linkId,
-        });
-      } else {
-        linkId = userInfo?.data().linkId;
-      }
-      setLink(`http://localhost:3000/invitation/${linkId}`);
-    }
-    setCreatedLink(true);
-  };
 
   useEffect(() => {
     if (!loading && value) {
@@ -94,13 +54,51 @@ function FounderPage() {
     }
   }, [value]);
 
-  return (
-    <FounderLayout investors={false}>
-      <div className="flex items-center justify-between">
-        {error && <strong>Error: {JSON.stringify(error)}</strong>}
-        {loading && <span>Loading...</span>}
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
 
-        <h1 className="text-2xl font-bold">Perguntas</h1>
+  const createQuestion = async (question: String) => {
+    setCreatingQuestion(false);
+    await addDoc(collection(getFirestore(app), 'questions'), {
+      question,
+      answer: '',
+      companyId: userInfo?.data().companyId,
+    });
+  };
+
+  const createLink = async () => {
+    const links = await getDocs(
+      query(
+        collection(getFirestore(app), 'emailsShared'),
+        where('uid', '==', user?.sub),
+        where('email', '==', email.toLowerCase())
+      )
+    );
+
+    if (links && links.docs.length === 0) {
+      await addDoc(collection(getFirestore(app), 'emailsShared'), {
+        uid: user?.sub,
+        email: email.toLowerCase(),
+      });
+    }
+
+    let linkId = '';
+    if (!userInfo?.data().linkId) {
+      linkId = uuid();
+      await updateDoc(doc(getFirestore(app), 'users', user?.sub), {
+        linkId,
+      });
+    } else {
+      linkId = userInfo?.data().linkId;
+    }
+    setLink(`http://localhost:3000/invitation/${linkId}`);
+
+    setCreatedLink(true);
+  };
+
+  return (
+    <DashboardLayout type={LayoutType.founder}>
+      <div className="flex items-center justify-end">
         <div className="flex items-center text-2xl">
           <BsPlusCircle
             onClick={() => {
@@ -117,9 +115,12 @@ function FounderPage() {
           createdLink={createdLink}
           link={link}
           createLink={createLink}
+          setCreatedLink={setCreatedLink}
         />
       </div>
 
+      {error && <strong>Error: {JSON.stringify(error)}</strong>}
+      {loading && <span>Loading...</span>}
       {/* Caixa para criar pergunta */}
       {creatingQuestion && (
         <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
@@ -128,7 +129,6 @@ function FounderPage() {
             <NewQuestion
               submitFunc={createQuestion}
               cancelFunc={setCreatingQuestion}
-              uid={user?.uid}
             />
           </span>
         </div>
@@ -167,8 +167,6 @@ function FounderPage() {
           </span>
         </div>
       )}
-    </FounderLayout>
+    </DashboardLayout>
   );
-}
-
-export default FounderPage;
+});

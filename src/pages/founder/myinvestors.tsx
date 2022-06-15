@@ -1,36 +1,37 @@
-import { getAuth } from '@firebase/auth';
-import { collection, getFirestore, query, where } from 'firebase/firestore';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getFirestore,
+  query,
+  where,
+} from 'firebase/firestore';
 import { app } from 'firebaseConfig';
-import { useRouter } from 'next/router';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { AiOutlineClose } from 'react-icons/ai';
 
-import { Meta } from '@/layout/Meta';
-import { FounderLayout } from '@/templates/FounderLayout';
+import DeleteDialog from '@/components/DeleteDialog';
+import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
-function MyInvestors() {
-  const router = useRouter();
-  const [user] = useAuthState(getAuth(app));
-  const [companies, loading, error] = useCollection(
+export default withPageAuthRequired(function MyInvestors() {
+  const { user, error, isLoading } = useUser();
+  const [isOpen, setIsOpen] = useState(false);
+  const [companies, loading, error2] = useCollection(
     query(
-      collection(getFirestore(app), 'shareableLinks'),
-      where('uid', '==', user?.uid)
+      collection(getFirestore(app), 'emailsShared'),
+      where('uid', '==', user !== undefined ? user?.sub : 'qwer')
     )
   );
 
+  const removeUser = async (shareId: string) => {
+    await deleteDoc(doc(getFirestore(app), 'emailsShared', shareId));
+  };
+
   return (
-    <FounderLayout
-      investors={true}
-      meta={
-        <Meta
-          title="Star Tub"
-          description="One-stop-shop for your startup needs"
-        />
-      }
-    >
+    <DashboardLayout type={LayoutType.founder}>
       <div className="flex flex-col">
-        {error && <strong>Error: {JSON.stringify(error)}</strong>}
-        {loading && <span>Collection: Loading...</span>}
         {companies?.docs.length === 0 && (
           <div className="flex justify-center">
             <div className="text-center">
@@ -38,19 +39,31 @@ function MyInvestors() {
             </div>
           </div>
         )}
-        {companies?.docs.map((doc) => (
-          <div key={doc.id} className="flex">
-            <button
-              className="cursor-pointer rounded-md border-2 border-slate-400 bg-slate-100 px-4 py-2"
-              onClick={() => {}}
-            >
-              {doc.data().email}
-            </button>
-          </div>
-        ))}
+        <div className="my-6 flex flex-wrap justify-between gap-4 pt-4">
+          {(error || error2) && <strong>Error: {JSON.stringify(error)}</strong>}
+          {(isLoading || loading) && <span>Loading...</span>}
+          {companies?.docs.map((doc) => (
+            <div key={doc.id}>
+              <div className="flex items-center gap-3 rounded-md border-1 border-slate-400 bg-slate-100 px-4 py-2">
+                {doc.data().email}
+                <div
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                >
+                  <AiOutlineClose className="cursor-pointer" />
+                </div>
+              </div>
+              <DeleteDialog
+                setIsOpen={setIsOpen}
+                isOpen={isOpen}
+                user={doc.data().email}
+                removeUser={() => removeUser(doc.id)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </FounderLayout>
+    </DashboardLayout>
   );
-}
-
-export default MyInvestors;
+});

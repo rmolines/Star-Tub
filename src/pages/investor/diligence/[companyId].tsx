@@ -1,38 +1,36 @@
-import { getAuth } from '@firebase/auth';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   addDoc,
   collection,
   doc,
   getFirestore,
   query,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
+import { BsPlusCircle } from 'react-icons/bs';
+import { uuid } from 'uuidv4';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
-import { Meta } from '@/layout/Meta';
-import { DiligenceLayout } from '@/templates/DiligenceLayout';
+import { ShareDialog } from '@/components/ShareDialog';
+import ShareIcon from '@/components/ShareIcon';
+import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
-const Diligence = () => {
-  // const router = useRouter();
+export default withPageAuthRequired(function Diligence() {
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [unansweredQuestions, setUnansweredQuestions] = useState([]);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
-  const [user] = useAuthState(getAuth(app));
+  const { user, error2, isLoading } = useUser();
+  const [isOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [link, setLink] = useState('');
+  const [createdLink, setCreatedLink] = useState(false);
   const router = useRouter();
-
-  const [company] = useDocument(
-    doc(
-      getFirestore(app),
-      'users',
-      Object.keys(router.query).length === 0 ? 'aa' : router.query.companyId
-    )
-  );
 
   const [value, loading, error] = useCollection(
     query(
@@ -45,6 +43,14 @@ const Diligence = () => {
     )
   );
 
+  const [company] = useDocument(
+    doc(
+      getFirestore(app),
+      'companies',
+      router.query ? router.query.companyId : ''
+    )
+  );
+
   const createQuestion = async (question: String) => {
     await addDoc(collection(getFirestore(app), 'questions'), {
       question,
@@ -52,6 +58,25 @@ const Diligence = () => {
       companyId: router.query.companyId,
     });
     setCreatingQuestion(false);
+  };
+
+  const createLink = async () => {
+    await addDoc(collection(getFirestore(app), 'emailsShared'), {
+      companyId: router.query.companyId,
+      email: email.toLowerCase(),
+    });
+    let linkId = '';
+    if (!company?.data().linkId) {
+      linkId = uuid();
+      await updateDoc(doc(getFirestore(app), 'companies', company?.id), {
+        linkId,
+      });
+    } else {
+      linkId = company?.data().linkId;
+    }
+    setLink(`http://localhost:3000/invitation/${linkId}`);
+
+    setCreatedLink(true);
   };
 
   useEffect(() => {
@@ -65,23 +90,31 @@ const Diligence = () => {
     }
   }, [value]);
 
-  if (!loading && !error && user == null) {
-    router.push('/auth');
-  }
-
   return (
-    <DiligenceLayout
-      companyName={company?.data() ? company.data().empresa : ''}
-      meta={
-        <Meta
-          title="Next.js Boilerplate Presentation"
-          description="Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework."
+    <DashboardLayout type={LayoutType.diligence}>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Perguntas</h1>
+        {error && <strong>Error: {JSON.stringify(error)}</strong>}
+        {loading && <span>Collection: Loading...</span>}
+
+        <div className="flex items-center text-2xl">
+          <BsPlusCircle
+            onClick={() => {
+              setCreatingQuestion(true);
+            }}
+            className="mr-4 cursor-pointer"
+          />
+          <ShareIcon setAction={setIsOpen}></ShareIcon>
+        </div>
+        <ShareDialog
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setEmail={setEmail}
+          createdLink={createdLink}
+          link={link}
+          createLink={createLink}
         />
-      }
-    >
-      <h1 className="text-2xl font-bold">Perguntas</h1>
-      {error && <strong>Error: {JSON.stringify(error)}</strong>}
-      {loading && <span>Collection: Loading...</span>}
+      </div>
 
       {/* Caixa para criar pergunta */}
       {creatingQuestion && (
@@ -112,27 +145,6 @@ const Diligence = () => {
           ))}
         </span>
       )}
-
-      {creatingQuestion && (
-        <NewQuestion
-          submitFunc={createQuestion}
-          cancelFunc={setCreatingQuestion}
-          uid={user?.uid}
-        />
-      )}
-
-      <div className="flex justify-end">
-        <button
-          className="h-12 w-12 rounded-full bg-green-600 text-2xl text-white"
-          onClick={() => {
-            setCreatingQuestion(true);
-          }}
-        >
-          +
-        </button>
-      </div>
-    </DiligenceLayout>
+    </DashboardLayout>
   );
-};
-
-export default Diligence;
+});

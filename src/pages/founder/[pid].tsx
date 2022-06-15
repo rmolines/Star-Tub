@@ -1,14 +1,12 @@
 import 'firebase/compat/auth';
 
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { getAuth } from '@firebase/auth';
 import firebase from 'firebase/compat/app';
 import { app } from 'firebaseConfig';
-import { useRouter } from 'next/router';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-function FounderPage() {
-  const router = useRouter();
-
+export default withPageAuthRequired(function FounderPage() {
   // Configure FirebaseUI.
   const uiConfig = {
     // Popup signin flow rather than redirect flow.
@@ -24,6 +22,4 @@ function FounderPage() {
     ],
   };
   return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={getAuth(app)} />;
-}
-
-export default FounderPage;
+});

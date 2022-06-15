@@ -2,7 +2,6 @@ import { getAuth } from '@firebase/auth';
 import {
   addDoc,
   collection,
-  doc,
   getFirestore,
   query,
   where,
@@ -11,12 +10,11 @@ import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { TextBox } from '@/components/QuestionBox';
-import { Meta } from '@/layout/Meta';
-import { DiligenceLayout } from '@/templates/DiligenceLayout';
+import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 const Diligence = () => {
   // const router = useRouter();
@@ -25,14 +23,6 @@ const Diligence = () => {
   const [creatingQuestion, setCreatingQuestion] = useState(false);
   const [user] = useAuthState(getAuth(app));
   const router = useRouter();
-
-  const [company] = useDocument(
-    doc(
-      getFirestore(app),
-      'users',
-      Object.keys(router.query).length === 0 ? '' : router.query.pid
-    )
-  );
 
   const [value, loading, error] = useCollection(
     query(
@@ -70,15 +60,7 @@ const Diligence = () => {
   }
 
   return (
-    <DiligenceLayout
-      companyName={company?.data() ? company.data().empresa : ''}
-      meta={
-        <Meta
-          title="Next.js Boilerplate Presentation"
-          description="Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework."
-        />
-      }
-    >
+    <DashboardLayout type={LayoutType.diligence}>
       <h1 className="text-2xl font-bold">Perguntas</h1>
       {error && <strong>Error: {JSON.stringify(error)}</strong>}
       {loading && <span>Collection: Loading...</span>}
@@ -129,7 +111,7 @@ const Diligence = () => {
           +
         </button>
       </div>
-    </DiligenceLayout>
+    </DashboardLayout>
   );
 };
 
