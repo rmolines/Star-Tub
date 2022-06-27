@@ -12,6 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
+import error from 'next/error';
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { BsPlusCircle } from 'react-icons/bs';
@@ -125,6 +126,8 @@ export default withPageAuthRequired(function Founder() {
         />
       </div>
 
+      {error && <strong>Error: {JSON.stringify(error)}</strong>}
+      {loading && <span>Loading...</span>}
       {/* Caixa para criar pergunta */}
       {creatingQuestion && (
         <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
