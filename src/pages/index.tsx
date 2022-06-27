@@ -1,4 +1,4 @@
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useUser } from '@auth0/nextjs-auth0';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import router from 'next/router';
@@ -6,7 +6,7 @@ import { Fragment, useEffect } from 'react';
 
 import { useUserInfo } from '@/context/UserInfoContext';
 
-export default withPageAuthRequired(function Index() {
+export default function Index() {
   const { user } = useUser();
   const { setUserInfo } = useUserInfo();
 
@@ -20,7 +20,7 @@ export default withPageAuthRequired(function Index() {
     );
 
     if (userInfo === undefined || !userInfo.exists()) {
-      router.push('completeRegistration');
+      router.push('/api/auth/login');
     } else {
       setUserInfo(userInfo);
       if (userInfo.data().userType === 'founder') {
@@ -38,4 +38,4 @@ export default withPageAuthRequired(function Index() {
   }, [user]);
 
   return <Fragment />;
-});
+}
