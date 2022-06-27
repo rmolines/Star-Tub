@@ -83,7 +83,7 @@ const DashboardLayout = (props: IMainProps) => {
               <li className="flex items-center space-x-2  p-4 text-slate-900">
                 <BiFace className="hidden h-12 w-12 rounded-full dark:bg-gray-500 md:flex" />
                 <div>
-                  {userInfo?.data() && (
+                  {userInfo && userInfo?.data() && (
                     <h2 className="font-semibold lg:text-lg">
                       {`${userInfo?.data().firstName} ${
                         userInfo?.data().lastName

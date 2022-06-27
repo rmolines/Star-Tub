@@ -17,7 +17,7 @@ export function useUserInfo() {
 }
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
 
   return (
     <UserInfoContext.Provider

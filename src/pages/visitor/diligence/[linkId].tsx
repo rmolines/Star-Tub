@@ -31,7 +31,7 @@ const Diligence = () => {
     doc(
       getFirestore(app),
       'companies',
-      userInfo !== undefined ? userInfo.docs[0].data().companyId : 'as'
+      userInfo ? userInfo.docs[0].data().companyId : 'as'
     )
   );
 
@@ -41,7 +41,7 @@ const Diligence = () => {
       where(
         'companyId',
         '==',
-        userInfo !== undefined ? userInfo.docs[0].data().companyId : 'as'
+        userInfo ? userInfo.docs[0].data().companyId : 'as'
       )
     )
   );
