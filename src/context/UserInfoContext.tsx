@@ -1,4 +1,19 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { useUser } from '@auth0/nextjs-auth0';
+import {
+  doc,
+  DocumentData,
+  DocumentSnapshot,
+  getDoc,
+  getFirestore,
+} from 'firebase/firestore';
+import { app } from 'firebaseConfig';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 // TODO melhorar defaults and merge user and userinfo contexts
 
@@ -17,7 +32,26 @@ export function useUserInfo() {
 }
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
-  const [userInfo, setUserInfo] = useState(null);
+  const { user } = useUser();
+  const [userInfo, setUserInfo] =
+    useState<DocumentSnapshot<DocumentData> | null>(null);
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      if (user) {
+        const userInfoShadow = await getDoc(
+          doc(
+            getFirestore(app),
+            'users',
+            typeof user?.sub === 'string' ? user?.sub : ''
+          )
+        );
+        setUserInfo(userInfoShadow);
+      }
+    };
+
+    getUserInfo();
+  }, [user]);
 
   return (
     <UserInfoContext.Provider
