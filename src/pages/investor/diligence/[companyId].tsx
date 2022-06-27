@@ -1,35 +1,29 @@
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   addDoc,
   collection,
-  doc,
+  DocumentData,
   getFirestore,
   query,
-  updateDoc,
+  QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import { BsPlusCircle } from 'react-icons/bs';
-import { uuid } from 'uuidv4';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
-import { ShareDialog } from '@/components/ShareDialog';
-import ShareIcon from '@/components/ShareIcon';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 export default withPageAuthRequired(function Diligence() {
-  const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  const [unansweredQuestions, setUnansweredQuestions] = useState([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
-  const { user, error2, isLoading } = useUser();
-  const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [link, setLink] = useState('');
-  const [createdLink, setCreatedLink] = useState(false);
+
   const router = useRouter();
 
   const [value, loading, error] = useCollection(
@@ -43,14 +37,6 @@ export default withPageAuthRequired(function Diligence() {
     )
   );
 
-  const [company] = useDocument(
-    doc(
-      getFirestore(app),
-      'companies',
-      router.query ? router.query.companyId : ''
-    )
-  );
-
   const createQuestion = async (question: String) => {
     await addDoc(collection(getFirestore(app), 'questions'), {
       question,
@@ -60,32 +46,10 @@ export default withPageAuthRequired(function Diligence() {
     setCreatingQuestion(false);
   };
 
-  const createLink = async () => {
-    await addDoc(collection(getFirestore(app), 'emailsShared'), {
-      companyId: router.query.companyId,
-      email: email.toLowerCase(),
-    });
-    let linkId = '';
-    if (!company?.data().linkId) {
-      linkId = uuid();
-      await updateDoc(doc(getFirestore(app), 'companies', company?.id), {
-        linkId,
-      });
-    } else {
-      linkId = company?.data().linkId;
-    }
-    setLink(`http://localhost:3000/invitation/${linkId}`);
-
-    setCreatedLink(true);
-  };
-
   useEffect(() => {
     if (!loading && value) {
       setAnsweredQuestions(
         value.docs.filter((doc) => doc.data().answer !== '')
-      );
-      setUnansweredQuestions(
-        value.docs.filter((doc) => doc.data().answer === '')
       );
     }
   }, [value]);
@@ -104,16 +68,7 @@ export default withPageAuthRequired(function Diligence() {
             }}
             className="mr-4 cursor-pointer"
           />
-          <ShareIcon setAction={setIsOpen}></ShareIcon>
         </div>
-        <ShareDialog
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setEmail={setEmail}
-          createdLink={createdLink}
-          link={link}
-          createLink={createLink}
-        />
       </div>
 
       {/* Caixa para criar pergunta */}
@@ -124,7 +79,6 @@ export default withPageAuthRequired(function Diligence() {
             <NewQuestion
               submitFunc={createQuestion}
               cancelFunc={setCreatingQuestion}
-              uid={user?.uid}
             />
           </span>
         </div>
@@ -133,13 +87,13 @@ export default withPageAuthRequired(function Diligence() {
       {/* Perguntas respondidas */}
       {answeredQuestions.length > 0 && (
         <span>
-          {answeredQuestions.map((doc, index) => (
+          {answeredQuestions.map((docShadow, index) => (
             <QuestionBox
-              key={doc.id}
-              id={doc.id}
+              key={docShadow.id}
+              id={docShadow.id}
               index={index}
-              question={doc.data().question}
-              answer={doc.data().answer}
+              question={docShadow.data().question}
+              answer={docShadow.data().answer}
               unanswered={false}
             />
           ))}

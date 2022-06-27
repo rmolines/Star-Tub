@@ -42,10 +42,10 @@ export default withPageAuthRequired(function MyInvestors() {
         <div className="my-6 flex flex-wrap justify-between gap-4 pt-4">
           {(error || error2) && <strong>Error: {JSON.stringify(error)}</strong>}
           {(isLoading || loading) && <span>Loading...</span>}
-          {companies?.docs.map((doc) => (
-            <div key={doc.id}>
+          {companies?.docs.map((docShadow) => (
+            <div key={docShadow.id}>
               <div className="flex items-center gap-3 rounded-md border-1 border-slate-400 bg-slate-100 px-4 py-2">
-                {doc.data().email}
+                {docShadow.data().email}
                 <div
                   onClick={() => {
                     setIsOpen(true);
@@ -57,8 +57,8 @@ export default withPageAuthRequired(function MyInvestors() {
               <DeleteDialog
                 setIsOpen={setIsOpen}
                 isOpen={isOpen}
-                user={doc.data().email}
-                removeUser={() => removeUser(doc.id)}
+                user={docShadow.data().email}
+                removeUser={() => removeUser(docShadow.id)}
               />
             </div>
           ))}

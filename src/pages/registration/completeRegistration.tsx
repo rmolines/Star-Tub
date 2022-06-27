@@ -13,6 +13,8 @@ import { useForm } from 'react-hook-form';
 
 import StateSelect from '@/components/StateSelect';
 
+import { RegistrationFormValues } from './types';
+
 function CompleteRegistration() {
   const { user, error, isLoading } = useUser();
   const {
@@ -20,22 +22,11 @@ function CompleteRegistration() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({ defaultValues: { userType: 'founder' } });
+  } = useForm<RegistrationFormValues>({
+    defaultValues: { userType: 'founder' },
+  });
 
-  const createUser = async (data: {
-    userType: string;
-    companyName: string;
-    firstName: string;
-    lastName: string;
-    url: string;
-    description: string;
-    stage: string;
-    sector: string;
-    tech: string;
-    model: string;
-    state: string;
-    linkedin: string;
-  }) => {
+  const createUser = async (data: RegistrationFormValues) => {
     const company = await addDoc(collection(getFirestore(app), 'companies'), {
       name: data.companyName,
       url: data.url,
@@ -48,16 +39,23 @@ function CompleteRegistration() {
       linkedin: data.linkedin,
     });
 
-    await setDoc(doc(getFirestore(app), 'users', user?.sub), {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      userType: data.userType,
-      companyId: company.id,
-    });
+    await setDoc(
+      doc(
+        getFirestore(app),
+        'users',
+        typeof user?.sub === 'string' ? user.sub : ''
+      ),
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userType: data.userType,
+        companyId: company.id,
+      }
+    );
     router.push('/');
   };
 
-  const onSubmit = (data) => createUser(data);
+  const onSubmit = (data: RegistrationFormValues) => createUser(data);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
@@ -186,7 +184,7 @@ function CompleteRegistration() {
               </div>
 
               <div className="mt-2 flex w-full flex-col">
-                <label className="text-sm">Founder's LinkedIn</label>
+                <label className="text-sm">Founder&apos;s LinkedIn</label>
                 <input
                   type={'url'}
                   {...register('linkedin')}
@@ -196,7 +194,7 @@ function CompleteRegistration() {
             </>
           )}
           {/* errors will return when field validation fails  */}
-          {errors.exampleRequired && <span>This field is required</span>}
+          {errors.stage && <span>This field is required</span>}
 
           <div className="flex justify-start">
             <input

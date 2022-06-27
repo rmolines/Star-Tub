@@ -3,38 +3,44 @@ import {
   addDoc,
   collection,
   doc,
+  DocumentData,
   getDocs,
   getFirestore,
   query,
+  QueryDocumentSnapshot,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
+import error from 'next/error';
 import { useEffect, useState } from 'react';
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import { BsPlusCircle } from 'react-icons/bs';
 import { uuid } from 'uuidv4';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
 import ShareIcon from '@/components/ShareIcon';
+import { useUserInfo } from '@/context/UserInfoContext';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
-import { ShareDialog } from '../../components/ShareDialog';
+import { ShareDialog } from '../../../components/ShareDialog';
 
 export default withPageAuthRequired(function Founder() {
-  const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  const [unansweredQuestions, setUnansweredQuestions] = useState([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
+  const [unansweredQuestions, setUnansweredQuestions] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [link, setLink] = useState('');
   const [createdLink, setCreatedLink] = useState(false);
-  const { user, error, isLoading } = useUser();
 
-  const [userInfo] = useDocument(
-    doc(getFirestore(app), 'users', user !== undefined ? user?.sub : 'qwer')
-  );
+  const { user } = useUser();
+  const { userInfo } = useUserInfo();
 
   const [value, loading] = useCollection(
     query(
@@ -46,16 +52,13 @@ export default withPageAuthRequired(function Founder() {
   useEffect(() => {
     if (!loading && value) {
       setAnsweredQuestions(
-        value.docs.filter((doc) => doc.data().answer !== '')
+        value.docs.filter((docShadow) => docShadow.data().answer !== '')
       );
       setUnansweredQuestions(
-        value.docs.filter((doc) => doc.data().answer === '')
+        value.docs.filter((docShadow) => docShadow.data().answer === '')
       );
     }
   }, [value]);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
 
   const createQuestion = async (question: String) => {
     setCreatingQuestion(false);
@@ -85,9 +88,13 @@ export default withPageAuthRequired(function Founder() {
     let linkId = '';
     if (!userInfo?.data().linkId) {
       linkId = uuid();
-      await updateDoc(doc(getFirestore(app), 'users', user?.sub), {
-        linkId,
-      });
+
+      // TODO throw error when sub is undefined
+      if (user?.sub) {
+        await updateDoc(doc(getFirestore(app), 'users', user?.sub), {
+          linkId,
+        });
+      }
     } else {
       linkId = userInfo?.data().linkId;
     }
@@ -136,13 +143,13 @@ export default withPageAuthRequired(function Founder() {
       {/* Perguntas respondidas */}
       {answeredQuestions.length > 0 && (
         <span>
-          {answeredQuestions.map((doc, index) => (
+          {answeredQuestions.map((docShadow, index) => (
             <QuestionBox
-              key={doc.id}
-              id={doc.id}
+              key={docShadow.id}
+              id={docShadow.id}
               index={index}
-              question={doc.data().question}
-              answer={doc.data().answer}
+              question={docShadow.data().question}
+              answer={docShadow.data().answer}
               unanswered={false}
             />
           ))}
@@ -154,13 +161,13 @@ export default withPageAuthRequired(function Founder() {
         <div className="my-8 border-t-1 border-slate-200 pt-4">
           <h2 className="text-lg font-semibold">Não Respondidas</h2>
           <span>
-            {unansweredQuestions.map((doc, index) => (
+            {unansweredQuestions.map((docShadow, index) => (
               <QuestionBox
-                key={doc.id}
+                key={docShadow.id}
                 index={index}
-                id={doc.id}
-                question={doc.data().question}
-                answer={doc.data().answer}
+                id={docShadow.id}
+                question={docShadow.data().question}
+                answer={docShadow.data().answer}
                 unanswered={true}
               />
             ))}

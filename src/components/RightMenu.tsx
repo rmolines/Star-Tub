@@ -1,9 +1,17 @@
 import { useRouter } from 'next/router';
-import { forwardRef } from 'react';
+import { Dispatch, forwardRef, SetStateAction } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { RiLogoutBoxRLine, RiProfileLine } from 'react-icons/ri';
 
-const RightMenu = forwardRef(function RightMenu(props, ref) {
+const RightMenu = forwardRef(function RightMenu({
+  setShowMenu,
+}: {
+  setShowMenu: Dispatch<SetStateAction<boolean>>;
+}) {
   const router = useRouter();
+  const ref = useDetectClickOutside({
+    onTriggered: () => setShowMenu(false),
+  });
 
   return (
     <div

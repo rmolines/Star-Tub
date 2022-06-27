@@ -13,10 +13,15 @@ import { useEffect } from 'react';
 
 function Invitation() {
   const router = useRouter();
+  const { verificationLink } = router.query;
 
   const confirmLink = async () => {
     const res = await getDoc(
-      doc(getFirestore(app), 'verificationLinks', router.query.verificationLink)
+      doc(
+        getFirestore(app),
+        'verificationLinks',
+        typeof verificationLink === 'string' ? verificationLink : ''
+      )
     );
 
     if (res.exists()) {

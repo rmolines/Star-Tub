@@ -22,7 +22,9 @@ const QuestionBox = (props: Props) => {
       {!editing && !props.unanswered && (
         <AnsweredBox {...props} setEditing={setEditing} />
       )}
-      {!editing && props.unanswered && <UnansweredBox {...props} />}
+      {!editing && props.unanswered && (
+        <UnansweredBox {...props} setEditing={setEditing} />
+      )}
     </div>
   );
 };

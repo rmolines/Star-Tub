@@ -1,21 +1,17 @@
-import { useUser } from '@auth0/nextjs-auth0';
-import { doc, getFirestore } from 'firebase/firestore';
-import { app } from 'firebaseConfig';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
-import { useDocument } from 'react-firebase-hooks/firestore';
 import { AiOutlineForm } from 'react-icons/ai';
 import { BiArrowBack, BiFace, BiLogOut } from 'react-icons/bi';
-import { FaUserFriends } from 'react-icons/fa';
+import { BsBriefcase } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
+import { useUserInfo } from '@/context/UserInfoContext';
 import { Meta } from '@/layout/Meta';
 
 export enum LayoutType {
   founder,
   investor,
-  profile,
   diligence,
   visitor,
 }
@@ -26,113 +22,46 @@ type IMainProps = {
   menuProps?: any;
 };
 
-function FounderMenuItems() {
-  return (
-    <ul className="relative flex flex-wrap text-xl">
-      <li className="mr-6">
-        <Link href="/founder">
-          <a className="border-none text-gray-700 hover:text-gray-900">
-            Minhas Perguntas
-          </a>
-        </Link>
-      </li>
-      <li className="mr-6">
-        <Link href="/founder/myinvestors">
-          <a className="border-none text-gray-700 hover:text-gray-900">
-            Meus Investidores
-          </a>
-        </Link>
-      </li>
-    </ul>
-  );
-}
-
 const founderMenuItems = [
   {
-    href: '/founder/',
+    href: '/founder/questions/',
     title: 'Perguntas',
     icon: <AiOutlineForm />,
   },
   {
-    href: '/founder/myinvestors/',
-    title: 'Investidores',
-    icon: <FaUserFriends />,
+    href: '/founder/company/',
+    title: 'Empresa',
+    icon: <BsBriefcase />,
   },
+  // {
+  //   href: '/founder/myinvestors/',
+  //   title: 'Investidores',
+  //   icon: <BsPeople />,
+  // },
 ];
 
-function VisitorMenuItems(props: { companyName: string }) {
-  return (
-    <ul className="relative flex flex-wrap items-center text-xl">
-      <li className="mr-6">{props.companyName}</li>
-    </ul>
-  );
-}
-
-function InvestorMenuItems() {
-  return (
-    <ul className="relative flex flex-wrap text-xl">
-      <li className="mr-6">
-        <Link href="/">
-          <a className="border-none text-gray-700 hover:text-gray-900">
-            Minhas Empresas
-          </a>
-        </Link>
-      </li>
-    </ul>
-  );
-}
-
-function ProfileMenuItems(props: { back: () => void }) {
-  return (
-    <ul className="relative flex flex-wrap items-center text-xl">
-      <li className="mr-6">
-        <a
-          onClick={() => {
-            props.back();
-          }}
-          className="cursor-pointer border-none text-gray-700 hover:text-gray-900"
-        >
-          <div className="rounded-full border-2 border-slate-400 bg-slate-100 p-2 hover:bg-slate-300">
-            <BiArrowBack className="" />
-          </div>
-        </a>
-      </li>
-    </ul>
-  );
-}
-
-function DiligenceMenuItems(props: { back: () => void }) {
-  return (
-    <ul className="relative flex flex-wrap items-center text-xl">
-      <li className="mr-6">
-        <a
-          onClick={() => {
-            props.back();
-          }}
-          className="cursor-pointer border-none text-gray-700 hover:text-gray-900"
-        >
-          <div className="rounded-full border-2 border-slate-400 bg-slate-100 p-2 hover:bg-slate-300">
-            <BiArrowBack className="" />
-          </div>
-        </a>
-      </li>
-    </ul>
-  );
-}
+const investorMenuItems = [
+  {
+    href: '/investor/companies/',
+    title: 'Empresas',
+    icon: <BsBriefcase />,
+  },
+  // {
+  //   href: '/investor/fund/',
+  //   title: 'Fundo',
+  //   icon: <BsCurrencyDollar />,
+  // },
+];
 
 const DashboardLayout = (props: IMainProps) => {
   const router = useRouter();
-  const { user, error, isLoading } = useUser();
-  const [userInfo] = useDocument(
-    doc(getFirestore(app), 'users', user?.sub ?? 'aa')
-  );
+  const { userInfo } = useUserInfo();
 
   const [showSideBar, setShowSideBar] = useState(false);
 
   const menuItems = {
     [LayoutType.founder]: founderMenuItems,
-    [LayoutType.investor]: founderMenuItems,
-    [LayoutType.profile]: founderMenuItems,
+    [LayoutType.investor]: investorMenuItems,
     [LayoutType.diligence]: founderMenuItems,
     [LayoutType.visitor]: founderMenuItems,
   }[props.type];
@@ -147,20 +76,22 @@ const DashboardLayout = (props: IMainProps) => {
         <aside
           className={`fixed ${
             showSideBar ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform duration-300 h-screen border-r-1 border-slate-200 bg-slate-50 p-2 md:w-72 md:translate-x-0 md:relative`}
+          } transition-transform duration-300 h-screen border-r-1 border-slate-200 bg-slate-50 p-2 md:w-60 md:translate-x-0 z-10`}
         >
           <nav>
             <ul>
               <li className="flex items-center space-x-2  p-4 text-slate-900">
                 <BiFace className="hidden h-12 w-12 rounded-full dark:bg-gray-500 md:flex" />
                 <div>
-                  <h2 className="font-semibold lg:text-lg">
-                    {`${userInfo?.data().firstName} ${
-                      userInfo?.data().lastName
-                    }` ?? ''}
-                  </h2>
+                  {userInfo?.data() && (
+                    <h2 className="font-semibold lg:text-lg">
+                      {`${userInfo?.data().firstName} ${
+                        userInfo?.data().lastName
+                      }`}
+                    </h2>
+                  )}
                   <span className="flex items-center space-x-1">
-                    <Link href={'/profile/'} className="border-0 no-underline">
+                    <Link href={'profile/'} className="border-0 no-underline">
                       <div className="cursor-pointer border-0 text-xs text-slate-500 no-underline dark:text-gray-400">
                         View profile
                       </div>
@@ -194,7 +125,7 @@ const DashboardLayout = (props: IMainProps) => {
                       } p-2 flex rounded cursor-pointer border-none`}
                     >
                       <div className="flex items-center gap-2">
-                        {icon}
+                        <span className="ml-2 text-lg">{icon}</span>
                         <div>{title}</div>
                       </div>
                     </a>
@@ -215,7 +146,9 @@ const DashboardLayout = (props: IMainProps) => {
                     className={`${'bg-slate-50 hover:bg-slate-100 text-slate-600'} p-2 flex rounded cursor-pointer border-none`}
                   >
                     <div className="flex items-center gap-2">
-                      <BiLogOut />
+                      <span className="ml-2 text-lg">
+                        <BiLogOut />
+                      </span>
                       <div>Logout</div>
                     </div>
                   </a>
@@ -224,11 +157,11 @@ const DashboardLayout = (props: IMainProps) => {
             </ul>
           </nav>
         </aside>
-        <main className="w-full antialiased">
+        <main className="w-full antialiased md:ml-60">
           <div className="mx-auto h-screen max-w-screen-md">
             {/* Children */}
             <div className="content">
-              <div className="flex items-center gap-2 px-4 pt-5">
+              <div className="mb-4 flex items-center gap-2 px-4 pt-5">
                 <button
                   className="cursor-pointer"
                   onClick={() => {

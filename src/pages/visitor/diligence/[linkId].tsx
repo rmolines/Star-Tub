@@ -2,33 +2,30 @@ import {
   addDoc,
   collection,
   doc,
+  DocumentData,
   getFirestore,
   query,
+  QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { BsPlusCircle } from 'react-icons/bs';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
+import { useUserInfo } from '@/context/UserInfoContext';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 const Diligence = () => {
   // const router = useRouter();
-  const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  const [unansweredQuestions, setUnansweredQuestions] = useState([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
-  const router = useRouter();
 
-  const [userInfo] = useCollection(
-    query(
-      collection(getFirestore(app), 'users'),
-      where('linkId', '==', router.query.linkId ? router.query.linkId : 'ss')
-    )
-  );
+  const { userInfo } = useUserInfo();
 
   const [companyInfo] = useDocument(
     doc(
@@ -61,10 +58,7 @@ const Diligence = () => {
   useEffect(() => {
     if (!loading && value) {
       setAnsweredQuestions(
-        value.docs.filter((doc) => doc.data().answer !== '')
-      );
-      setUnansweredQuestions(
-        value.docs.filter((doc) => doc.data().answer === '')
+        value.docs.filter((docShadow) => docShadow.data().answer !== '')
       );
     }
   }, [value]);
@@ -73,7 +67,7 @@ const Diligence = () => {
     <DashboardLayout
       type={LayoutType.visitor}
       menuProps={{
-        companyName: companyInfo?.data() ? companyInfo?.data().name : '',
+        companyName: companyInfo?.data()?.name,
       }}
     >
       <div className="flex items-center justify-between">
@@ -99,7 +93,6 @@ const Diligence = () => {
             <NewQuestion
               submitFunc={createQuestion}
               cancelFunc={setCreatingQuestion}
-              uid={'visitor'}
             />
           </span>
         </div>
@@ -107,13 +100,13 @@ const Diligence = () => {
       {/* Perguntas respondidas */}
       {answeredQuestions.length > 0 && (
         <span>
-          {answeredQuestions.map((doc, index) => (
+          {answeredQuestions.map((docShadow, index) => (
             <QuestionBox
-              key={doc.id}
-              id={doc.id}
+              key={docShadow.id}
+              id={docShadow.id}
               index={index}
-              question={doc.data().question}
-              answer={doc.data().answer}
+              question={docShadow.data().question}
+              answer={docShadow.data().answer}
               unanswered={false}
             />
           ))}

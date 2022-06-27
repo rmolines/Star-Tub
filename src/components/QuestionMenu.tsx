@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
 export function QuestionMenu(props: {
@@ -8,19 +9,9 @@ export function QuestionMenu(props: {
   deleteQuestion: (arg0: any) => void;
   id: any;
 }) {
-  const editMenu = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (editMenu.current && !editMenu.current.contains(event.target)) {
-        props.setShowEditMenu(false);
-      }
-    };
-    document.addEventListener('click', handleClickOutside, true);
-    return () => {
-      document.removeEventListener('click', handleClickOutside, true);
-    };
-  }, []);
+  const editMenu = useDetectClickOutside({
+    onTriggered: () => props.setShowEditMenu(false),
+  });
 
   return (
     <div className="relative">

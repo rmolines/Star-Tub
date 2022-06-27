@@ -1,4 +1,4 @@
-import { deleteDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
+import { doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import dynamic from 'next/dynamic';
 // Import React dependencies.
@@ -21,13 +21,8 @@ type Props = {
 };
 
 const EditingBox = (props: Props) => {
-  const [showEditMenu, setShowEditMenu] = useState(false);
   const [answer, setAnswer] = useState(props.answer);
   const [question, setQuestion] = useState(props.question);
-
-  const deleteQuestion = async (id: string) => {
-    await deleteDoc(doc(getFirestore(app), 'questions', id));
-  };
 
   const updateQuestion = async (
     id: string,

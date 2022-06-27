@@ -1,4 +1,3 @@
-import { getAuth } from '@firebase/auth';
 import {
   collection,
   doc,
@@ -11,14 +10,12 @@ import {
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { uuid } from 'uuidv4';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 function Invitation() {
-  const [user] = useAuthState(getAuth(app));
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [hasAccess, setHasAccess] = useState(true);

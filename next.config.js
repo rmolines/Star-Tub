@@ -15,6 +15,9 @@ module.exports = withBundleAnalyzer({
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  images: {
+    domains: ['firebasestorage.googleapis.com', 'picsum.photos'],
+  },
 
   poweredByHeader: false,
   trailingSlash: true,

@@ -1,7 +1,9 @@
-import sendgrid from '@sendgrid/mail';
+import sendgrid, { ResponseError } from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+if (process.env.SENDGRID_API_KEY) {
+  sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 const sendmail = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -12,8 +14,11 @@ const sendmail = async (req: NextApiRequest, res: NextApiResponse) => {
       html: `${req.body.html}`,
       // html: `<div>You've got a mail</div>`,
     });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({ error: error.message });
+  } catch (error: unknown) {
+    // TODO: consertar error handling
+    if (error instanceof ResponseError) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 
   return res.status(200).json({ error: '' });

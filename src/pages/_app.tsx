@@ -3,9 +3,13 @@ import '../styles/global.css';
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { AppProps } from 'next/app';
 
+import { UserInfoProvider } from '@/context/UserInfoContext';
+
 const MyApp = ({ Component, pageProps }: AppProps) => (
   <UserProvider>
-    <Component {...pageProps} />
+    <UserInfoProvider>
+      <Component {...pageProps} />
+    </UserInfoProvider>
   </UserProvider>
 );
 

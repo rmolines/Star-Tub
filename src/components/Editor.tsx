@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   data: any;
@@ -8,16 +8,13 @@ type Props = {
   onChange: (arg0: any) => void;
 };
 
+const { CKEditor } = require('@ckeditor/ckeditor5-react'); // v3+
+const BalloonEditor = require('ckeditor5-custom-build/build/ckeditor');
+
 function Editor(props: Props) {
-  const editorRef = useRef();
   const [editorLoaded, setEditorLoaded] = useState(false);
-  const { CKEditor, BalloonEditor } = editorRef.current || {};
 
   useEffect(() => {
-    editorRef.current = {
-      CKEditor: require('@ckeditor/ckeditor5-react').CKEditor, // v3+
-      BalloonEditor: require('ckeditor5-custom-build/build/ckeditor'),
-    };
     setEditorLoaded(true);
   }, []);
 
@@ -33,7 +30,7 @@ function Editor(props: Props) {
           editor={BalloonEditor}
           data={props.data}
           disabled={props.disabled}
-          onChange={(event, editor) => {
+          onChange={(_event: any, editor: { getData: () => any }) => {
             const data = editor.getData();
             props.onChange(data);
           }}

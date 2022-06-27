@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 type Props = {
@@ -8,9 +14,11 @@ type Props = {
 
 const NewQuestion = (props: Props) => {
   const [question, setQuestion] = useState('');
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!inputRef.current) throw Error('inputRef is not assigned');
+
     inputRef.current.focus();
     inputRef.current.select();
   }, []);
@@ -23,17 +31,12 @@ const NewQuestion = (props: Props) => {
           placeholder={'Escrever pergunta...'}
           onChange={(e) => setQuestion(e.target.value)}
           ref={inputRef}
-          // onKeyPress={(e) => {
-          //   if (e.key === 'Enter') {
-          //     props.submitFunc(question, props.uid);
-          //   }
-          // }}
         />
       </div>
       <div className="flex justify-end p-4">
         <button
           className="rounded-md bg-red-700 px-2 py-1 text-slate-50"
-          onClick={() => props.cancelFunc()}
+          onClick={() => props.cancelFunc(false)}
         >
           Cancelar
         </button>
