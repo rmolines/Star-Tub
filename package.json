@@ -15,6 +15,10 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.9.1",
+    "@ckeditor/ckeditor5-build-balloon": "^34.1.0",
+    "@ckeditor/ckeditor5-build-classic": "^34.1.0",
+    "@ckeditor/ckeditor5-dev-utils": "^30.3.1",
+    "@ckeditor/ckeditor5-dev-webpack-plugin": "^30.3.1",
     "@ckeditor/ckeditor5-react": "^5.0.2",
     "@firebase/auth": "^0.20.4",
     "@headlessui/react": "^1.6.5",
@@ -46,8 +50,10 @@
     "react-textarea-autosize": "^8.3.4",
     "stable": "^0.1.8",
     "superagent": "^8.0.0",
+    "terser-webpack-plugin": "^5.3.3",
     "uuid": "^8.3.2",
-    "uuidv4": "^6.2.13"
+    "uuidv4": "^6.2.13",
+    "webpack": "^5.73.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.1.6",

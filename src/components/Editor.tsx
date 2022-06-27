@@ -9,7 +9,7 @@ type Props = {
 };
 
 const { CKEditor } = require('@ckeditor/ckeditor5-react'); // v3+
-const BalloonEditor = require('ckeditor5-custom-build/build/ckeditor');
+const BalloonEditor = require('@ckeditor/ckeditor5-build-balloon');
 
 function Editor(props: Props) {
   const [editorLoaded, setEditorLoaded] = useState(false);
