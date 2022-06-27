@@ -3,7 +3,7 @@ import { app } from 'firebaseConfig';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
-import { CompanyFormValues } from '@/pages/founder/company/types';
+import { CompanyFormValues } from '@/types/companyTypes';
 
 export const sectors = [
   'Adtech',

@@ -4,7 +4,7 @@ import React from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
-import { CompanyFormValues } from '@/pages/founder/company/types';
+import { CompanyFormValues } from '@/types/companyTypes';
 
 export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
 

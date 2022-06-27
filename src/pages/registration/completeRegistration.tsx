@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form';
 
 import StateSelect from '@/components/StateSelect';
 
-import { RegistrationFormValues } from './types';
+import { RegistrationFormValues } from '../../types/registrationTypes';
 
 function CompleteRegistration() {
   const { user, error, isLoading } = useUser();

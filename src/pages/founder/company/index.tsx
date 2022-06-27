@@ -15,7 +15,7 @@ import { DistModelSelector } from '../../../components/DistModelSelector';
 import { SectorSelect } from '../../../components/SectorSelect';
 import { StageSelector } from '../../../components/StageSelector';
 import { TechSelector } from '../../../components/TechSelector';
-import { CompanyFormValues } from './types';
+import { CompanyFormValues } from '../../../types/companyTypes';
 
 export default withPageAuthRequired(function Profile() {
   const [logoURL, setLogoURL] = useState<string>('');

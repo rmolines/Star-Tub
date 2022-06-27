@@ -4,7 +4,7 @@ import React from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
-import { CompanyFormValues } from '@/pages/founder/company/types';
+import { CompanyFormValues } from '@/types/companyTypes';
 
 export const models = ['B2B', 'B2C', 'B2B2C', 'P2G', 'P2P'];
 
