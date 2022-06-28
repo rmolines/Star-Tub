@@ -6,11 +6,17 @@ import { useUserInfo } from '@/context/UserInfoContext';
 
 export default withPageAuthRequired(function Index() {
   const { user } = useUser();
-  const { userInfo, loading, error } = useUserInfo();
+  const { userInfo, loading, firebaseError, auth0Error } = useUserInfo();
 
   useEffect(() => {
-    console.log(userInfo?.data(), userInfo?.exists(), loading, error);
-    if (user && !loading && !error) {
+    console.log(
+      userInfo?.data(),
+      userInfo?.exists(),
+      loading,
+      firebaseError,
+      auth0Error
+    );
+    if (user && !loading && !firebaseError && !auth0Error) {
       const getUser = async () => {
         if (userInfo === undefined || !userInfo.exists()) {
           router.push('/registration/completeRegistration');
@@ -22,7 +28,7 @@ export default withPageAuthRequired(function Index() {
       };
       getUser();
     }
-  }, [user, loading, error]);
+  }, [user, loading, firebaseError, auth0Error]);
 
   return <Fragment />;
 });

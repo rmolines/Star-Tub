@@ -9,13 +9,15 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 type UserInfoType = {
   userInfo: any;
   loading: boolean;
-  error: FirestoreError | undefined;
+  firebaseError: FirestoreError | undefined;
+  auth0Error: Error | undefined;
 };
 
 const UserInfoContext = createContext<UserInfoType>({
   userInfo: null,
   loading: true,
-  error: undefined,
+  firebaseError: undefined,
+  auth0Error: undefined,
 });
 
 export function useUserInfo() {
@@ -23,8 +25,8 @@ export function useUserInfo() {
 }
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
-  const { user } = useUser();
-  const [userInfo, loading, error] = useDocument(
+  const { user, error: auth0Error, isLoading: auth0Loading } = useUser();
+  const [userInfo, firbaseLoading, firebaseError] = useDocument(
     doc(getFirestore(app), `users/${user?.sub}`)
   );
 
@@ -32,8 +34,9 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     <UserInfoContext.Provider
       value={{
         userInfo,
-        loading,
-        error,
+        loading: firbaseLoading || auth0Loading,
+        firebaseError,
+        auth0Error,
       }}
     >
       {children}
