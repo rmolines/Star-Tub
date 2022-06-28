@@ -9,16 +9,16 @@ export default withPageAuthRequired(function Index() {
   const { userInfo, loading, firebaseError, auth0Error } = useUserInfo();
 
   useEffect(() => {
-    console.log(
-      userInfo?.data(),
-      userInfo?.exists(),
-      user,
-      user?.sub,
-      loading,
-      firebaseError,
-      auth0Error
-    );
-    if (user && !loading && !firebaseError && !auth0Error) {
+    // console.log(
+    //   userInfo?.data(),
+    //   userInfo?.exists(),
+    //   user,
+    //   user?.sub,
+    //   loading,
+    //   firebaseError,
+    //   auth0Error
+    // );
+    if (user?.sub && !loading && !firebaseError && !auth0Error) {
       const getUser = async () => {
         if (userInfo === undefined || !userInfo.exists()) {
           router.push('/registration/completeRegistration');
