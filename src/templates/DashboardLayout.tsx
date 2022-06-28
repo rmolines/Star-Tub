@@ -81,7 +81,7 @@ const DashboardLayout = (props: IMainProps) => {
           <nav>
             <ul>
               <li className="flex items-center space-x-2  p-4 text-slate-900">
-                <BiFace className="hidden h-12 w-12 rounded-full dark:bg-gray-500 md:flex" />
+                <BiFace className="hidden h-12 w-12 rounded-full dark:bg-slate-500 md:flex" />
                 <div>
                   {userInfo && userInfo?.data() && (
                     <h2 className="font-semibold lg:text-lg">
@@ -92,7 +92,7 @@ const DashboardLayout = (props: IMainProps) => {
                   )}
                   <span className="flex items-center space-x-1">
                     <Link href={'profile/'} className="border-0 no-underline">
-                      <div className="cursor-pointer border-0 text-xs text-slate-500 no-underline dark:text-gray-400">
+                      <div className="cursor-pointer border-0 text-xs text-slate-500 no-underline dark:text-slate-400">
                         View profile
                       </div>
                     </Link>
@@ -178,7 +178,7 @@ const DashboardLayout = (props: IMainProps) => {
             </div>
 
             {/* Footer */}
-            {/* <div className="sticky border-t border-gray-300 py-8 text-center text-sm">
+            {/* <div className="sticky border-t border-slate-300 py-8 text-center text-sm">
               © Copyright {new Date().getFullYear()} {AppConfig.title}. Powered
               by{' '}
               <a href="https://creativedesignsguru.com">CreativeDesignsGuru</a>
