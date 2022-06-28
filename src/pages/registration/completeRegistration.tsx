@@ -36,7 +36,6 @@ function CompleteRegistration() {
   });
 
   const createUser = async (data: RegistrationFormValues) => {
-    console.log(data);
     const company = await addDoc(collection(getFirestore(app), 'companies'), {
       name: data.companyName,
       url: data.url,

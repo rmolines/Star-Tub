@@ -8,10 +8,12 @@ import { useDocument } from 'react-firebase-hooks/firestore';
 
 type UserInfoType = {
   userInfo: any;
+  loading: boolean;
 };
 
 const UserInfoContext = createContext<UserInfoType>({
   userInfo: null,
+  loading: true,
 });
 
 export function useUserInfo() {
@@ -20,12 +22,15 @@ export function useUserInfo() {
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  const [userInfo] = useDocument(doc(getFirestore(app), `users/${user?.sub}`));
+  const [userInfo, loading] = useDocument(
+    doc(getFirestore(app), `users/${user?.sub}`)
+  );
 
   return (
     <UserInfoContext.Provider
       value={{
         userInfo,
+        loading,
       }}
     >
       {children}

@@ -6,7 +6,7 @@ import { useUserInfo } from '@/context/UserInfoContext';
 
 export default withPageAuthRequired(function Index() {
   const { user } = useUser();
-  const { userInfo } = useUserInfo();
+  const { userInfo, loading } = useUserInfo();
 
   const getUser = async () => {
     if (userInfo === undefined || !userInfo.exists()) {
@@ -19,10 +19,10 @@ export default withPageAuthRequired(function Index() {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       getUser();
     }
-  }, [user, userInfo]);
+  }, [user, loading]);
 
   return <Fragment />;
 });
