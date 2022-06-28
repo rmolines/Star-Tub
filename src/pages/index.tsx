@@ -10,7 +10,7 @@ export default withPageAuthRequired(function Index() {
 
   useEffect(() => {
     if (user && !loading && !error) {
-      console.log(userInfo);
+      console.log(userInfo.data());
       const getUser = async () => {
         if (userInfo === undefined || !userInfo.exists()) {
           router.push('/registration/completeRegistration');
