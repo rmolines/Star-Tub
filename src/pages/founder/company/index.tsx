@@ -55,14 +55,10 @@ export default withPageAuthRequired(function Company() {
 
       const iconRef = ref(getStorage(), logoPath);
 
-      data.logo[0]
-        ?.arrayBuffer()
-        .then((buffer) => {
-          uploadBytes(iconRef, buffer, {
-            contentType: data.logo[0]?.type,
-          });
-        })
-        .then(() => {
+      data.logo[0]?.arrayBuffer().then((buffer) => {
+        uploadBytes(iconRef, buffer, {
+          contentType: data.logo[0]?.type,
+        }).then(() => {
           updateDoc(
             doc(getFirestore(app), 'companies', userInfo?.data().companyId),
             {
@@ -70,6 +66,7 @@ export default withPageAuthRequired(function Company() {
             }
           );
         });
+      });
     }
 
     await updateDoc(

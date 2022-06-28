@@ -1,30 +1,17 @@
 import { useUser } from '@auth0/nextjs-auth0';
-import {
-  doc,
-  DocumentData,
-  DocumentSnapshot,
-  getDoc,
-  getFirestore,
-} from 'firebase/firestore';
+import { doc, getFirestore } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext } from 'react';
+import { useDocument } from 'react-firebase-hooks/firestore';
 
 // TODO melhorar defaults and merge user and userinfo contexts
 
 type UserInfoType = {
   userInfo: any;
-  setUserInfo: (userInfo: any) => void;
 };
 
 const UserInfoContext = createContext<UserInfoType>({
   userInfo: null,
-  setUserInfo: (_userInfo) => {},
 });
 
 export function useUserInfo() {
@@ -33,33 +20,12 @@ export function useUserInfo() {
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  const [userInfo, setUserInfo] =
-    useState<DocumentSnapshot<DocumentData> | null>(null);
-
-  useEffect(() => {
-    const getUserInfo = async () => {
-      if (user) {
-        const userInfoShadow = await getDoc(
-          doc(
-            getFirestore(app),
-            'users',
-            typeof user?.sub === 'string' ? user?.sub : ''
-          )
-        );
-        setUserInfo(userInfoShadow);
-      }
-    };
-
-    getUserInfo();
-  }, [user]);
+  const [userInfo] = useDocument(doc(getFirestore(app), `users/${user?.sub}`));
 
   return (
     <UserInfoContext.Provider
       value={{
         userInfo,
-        setUserInfo: (userInfoShadow) => {
-          setUserInfo(userInfoShadow);
-        },
       }}
     >
       {children}

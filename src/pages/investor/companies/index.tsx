@@ -1,4 +1,5 @@
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -10,7 +11,7 @@ import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 type CompaniesDictType = {
   [key: string]: {
     name: string;
-    logoURL: string;
+    logoURL: string | undefined;
     sector: string;
     tech: string;
     model: string;
@@ -75,17 +76,33 @@ function Companies() {
     });
 
     const companiesDict: CompaniesDictType = {};
-    companiesData?.docs.forEach((e) => {
-      companiesDict[e.id] = {
-        name: e.get('name'),
-        logoURL: e.get('logoURL') ?? null,
-        sector: sectorsDict[e.get('sector')] ?? 'N/A',
-        tech: techDict[e.get('tech')] ?? 'N/A',
-        model: modelsDict[e.get('model')] ?? 'N/A',
-        state: statesDict[e.get('state')] ?? 'N/A',
-        stage: stagesDict[e.get('stage')] ?? 'N/A',
-      };
-    });
+
+    await Promise.all(
+      companiesData.docs.map(async (e) => {
+        const getLogoURL = async () => {
+          let tempURL: string | undefined;
+          if (
+            e.get('logoPath') &&
+            e.get('logoPath').split('.').pop() !== 'undefined'
+          ) {
+            const iconRef = ref(getStorage(), e.get('logoPath'));
+            tempURL = await getDownloadURL(iconRef);
+          }
+          return tempURL;
+        };
+
+        const URL = await getLogoURL();
+        companiesDict[e.id] = {
+          name: e.get('name'),
+          sector: sectorsDict[e.get('sector')] ?? 'N/A',
+          logoURL: URL,
+          tech: techDict[e.get('tech')] ?? 'N/A',
+          model: modelsDict[e.get('model')] ?? 'N/A',
+          state: statesDict[e.get('state')] ?? 'N/A',
+          stage: stagesDict[e.get('stage')] ?? 'N/A',
+        };
+      })
+    );
 
     setCompaniesState(companiesDict);
   };

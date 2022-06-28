@@ -10,6 +10,7 @@ import {
   QueryDocumentSnapshot,
   where,
 } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -23,7 +24,7 @@ import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 type CopmanyDictType = {
   name: string;
-  logoURL: string;
+  logoURL: string | undefined;
   sector: string;
   tech: string;
   model: string;
@@ -93,18 +94,33 @@ export default function Company() {
       statesDict[e.id] = e.get('value');
     });
 
-    const companyD: CopmanyDictType = {
-      name: company.get('name'),
-      logoURL: company.get('logoURL') ?? null,
-      sector: sectorsDict[company.get('sector')] ?? 'N/A',
-      tech: techDict[company.get('tech')] ?? 'N/A',
-      model: modelsDict[company.get('model')] ?? 'N/A',
-      state: statesDict[company.get('state')] ?? 'N/A',
-      stage: stagesDict[company.get('stage')] ?? 'N/A',
-      questions: questions.docs,
+    const getLogoURL = async () => {
+      let tempURL: string | undefined;
+      console.log(company.data());
+      if (
+        company.get('logoPath') &&
+        company.get('logoPath').split('.').pop() !== 'undefined'
+      ) {
+        const iconRef = ref(getStorage(), company.get('logoPath'));
+        tempURL = await getDownloadURL(iconRef);
+      }
+      return tempURL;
     };
 
-    setCompanyDict(companyD);
+    getLogoURL().then((URL) => {
+      const companyD: CopmanyDictType = {
+        name: company.get('name'),
+        logoURL: URL,
+        sector: sectorsDict[company.get('sector')] ?? 'N/A',
+        tech: techDict[company.get('tech')] ?? 'N/A',
+        model: modelsDict[company.get('model')] ?? 'N/A',
+        state: statesDict[company.get('state')] ?? 'N/A',
+        stage: stagesDict[company.get('stage')] ?? 'N/A',
+        questions: questions.docs,
+      };
+      setCompanyDict(companyD);
+    });
+
     setLoading(false);
   };
 

@@ -184,10 +184,12 @@ function CompleteRegistration() {
             <label className="text-xs">Website URL</label>
             <input
               type={'url'}
-              {...register('url')}
+              {...register('url', { required: true })}
               className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
             />
           </div>
+          {/* errors will return when field validation fails  */}
+          {errors.url && <span>This field is required</span>}
 
           {watch('userType') === 'founder' && (
             <>
@@ -203,6 +205,8 @@ function CompleteRegistration() {
               <div className="mt-2 flex w-full flex-col">
                 <StageSelector register={register} />
               </div>
+              {/* errors will return when field validation fails  */}
+              {errors.stage && <span>This field is required</span>}
 
               <div className="flex justify-center gap-4">
                 <SectorSelect register={register} />
@@ -220,14 +224,12 @@ function CompleteRegistration() {
                 <label className="text-xs">Founder&apos;s LinkedIn</label>
                 <input
                   type={'url'}
-                  {...register('linkedin')}
+                  {...register('linkedin', { required: true })}
                   className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
                 />
               </div>
             </>
           )}
-          {/* errors will return when field validation fails  */}
-          {errors.stage && <span>This field is required</span>}
 
           <div className="flex justify-start">
             <input

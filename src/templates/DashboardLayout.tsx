@@ -111,13 +111,11 @@ const DashboardLayout = (props: IMainProps) => {
               </li>
               {menuItems.map(({ href, title, icon }) => (
                 <li className="m-2" key={title}>
-                  <Link
-                    href={href}
-                    onClick={() => {
-                      setShowSideBar(false);
-                    }}
-                  >
+                  <Link href={href}>
                     <a
+                      onClick={() => {
+                        setShowSideBar(false);
+                      }}
                       className={`${
                         router.asPath === href
                           ? 'bg-slate-200 text-slate-800'
@@ -136,13 +134,11 @@ const DashboardLayout = (props: IMainProps) => {
                 className="m-2 border-t-1 border-slate-200 pt-2"
                 key={'Logout'}
               >
-                <Link
-                  href={'/api/auth/logout/'}
-                  onClick={() => {
-                    setShowSideBar(false);
-                  }}
-                >
+                <Link href={'/api/auth/logout/'}>
                   <a
+                    onClick={() => {
+                      setShowSideBar(false);
+                    }}
                     className={`${'bg-slate-50 hover:bg-slate-100 text-slate-600'} p-2 flex rounded cursor-pointer border-none`}
                   >
                     <div className="flex items-center gap-2">
