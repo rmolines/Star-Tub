@@ -8,18 +8,17 @@ export default withPageAuthRequired(function Index() {
   const { user } = useUser();
   const { userInfo, loading } = useUserInfo();
 
-  const getUser = async () => {
-    if (userInfo === undefined || !userInfo.exists()) {
-      router.push('/registration/completeRegistration');
-    } else if (userInfo.data().userType === 'founder') {
-      router.push('/founder/questions/');
-    } else {
-      router.push('/investor/companies/');
-    }
-  };
-
   useEffect(() => {
     if (user && !loading) {
+      const getUser = async () => {
+        if (userInfo === undefined || !userInfo.exists()) {
+          router.push('/registration/completeRegistration');
+        } else if (userInfo.data().userType === 'founder') {
+          router.push('/founder/questions/');
+        } else {
+          router.push('/investor/companies/');
+        }
+      };
       getUser();
     }
   }, [user, loading]);
