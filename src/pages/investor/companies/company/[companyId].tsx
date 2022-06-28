@@ -96,7 +96,6 @@ export default function Company() {
 
     const getLogoURL = async () => {
       let tempURL: string | undefined;
-      console.log(company.data());
       if (
         company.get('logoPath') &&
         company.get('logoPath').split('.').pop() !== 'undefined'
@@ -128,7 +127,7 @@ export default function Company() {
     if (typeof router.query.companyId === 'string') {
       getCompanyInfo(router.query.companyId);
     }
-  }, []);
+  }, [router.query]);
 
   return (
     <DashboardLayout type={LayoutType.investor}>
@@ -148,6 +147,7 @@ export default function Company() {
                 height={40}
                 alt="logo"
                 className="rounded"
+                quality={100}
               />
             ) : (
               <Image

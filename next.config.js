@@ -16,7 +16,11 @@ module.exports = withBundleAnalyzer({
     ignoreBuildErrors: false,
   },
   images: {
-    domains: ['firebasestorage.googleapis.com', 'picsum.photos'],
+    domains: [
+      'firebasestorage.googleapis.com',
+      'picsum.photos',
+      'blog.iprocess.com.br',
+    ],
   },
 
   poweredByHeader: false,

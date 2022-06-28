@@ -121,15 +121,20 @@ function Companies() {
               key={e}
             >
               <div className="flex w-full items-center justify-between">
-                <div>
+                <div className="relative">
                   <Image
                     src={
-                      companiesState[e]?.logoURL ?? 'https://picsum.photos/40'
+                      companiesState[e]?.logoURL ??
+                      'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
                     }
+                    placeholder={'blur'}
+                    blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
                     width={40}
                     height={40}
                     alt="logo"
                     className="rounded"
+                    objectFit="cover"
+                    quality={100}
                   />
                 </div>
                 <div
