@@ -6,10 +6,10 @@ import { useUserInfo } from '@/context/UserInfoContext';
 
 export default withPageAuthRequired(function Index() {
   const { user } = useUser();
-  const { userInfo, loading } = useUserInfo();
+  const { userInfo, loading, error } = useUserInfo();
 
   useEffect(() => {
-    if (user && !loading) {
+    if (user && !loading && !error) {
       const getUser = async () => {
         if (userInfo === undefined || !userInfo.exists()) {
           router.push('/registration/completeRegistration');
@@ -21,7 +21,7 @@ export default withPageAuthRequired(function Index() {
       };
       getUser();
     }
-  }, [user, loading]);
+  }, [user, loading, error]);
 
   return <Fragment />;
 });
