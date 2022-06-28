@@ -7,7 +7,7 @@ import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useForm } from 'react-hook-form';
 
 import { useUserInfo } from '@/context/UserInfoContext';
-import { ProfileFormValues } from '@/pages/founder/profile/ProfileFormValues';
+import { ProfileFormValues } from '@/types/ProfileFormValues';
 
 import DeleteUserDialog from './DeleteUserDialog';
 
