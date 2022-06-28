@@ -2,3 +2,5 @@ node_modules
 out
 webpack.config.js
 ckeditor5
+cypress.config.ts
+cypress

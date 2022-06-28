@@ -1,10 +1,13 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { doc, getFirestore, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { useForm } from 'react-hook-form';
 
+import DeleteUserDialog from '@/components/DeleteUserDialog';
 import { useUserInfo } from '@/context/UserInfoContext';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
@@ -16,8 +19,13 @@ type ProfileFormValues = {
 
 export default withPageAuthRequired(function Profile() {
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
   const { user } = useUser();
   const { userInfo } = useUserInfo();
+  const [isOpen, setIsOpen] = useState(false);
+  const deleteUserButtonRef = useDetectClickOutside({
+    onTriggered: () => setIsOpen(false),
+  });
 
   const {
     register,
@@ -30,7 +38,7 @@ export default withPageAuthRequired(function Profile() {
     doc(
       getFirestore(app),
       'companies',
-      userInfo !== undefined ? userInfo.data().companyId : 'wre'
+      userInfo ? userInfo.data().companyId : 'wre'
     )
   );
 
@@ -43,6 +51,14 @@ export default withPageAuthRequired(function Profile() {
     }
 
     setSuccess(true);
+  };
+
+  const deleteUser = async (sub: string | undefined | null) => {
+    if (sub) {
+      await deleteDoc(doc(getFirestore(app), `users/${sub}`));
+
+      router.push('/api/auth/logout/');
+    }
   };
 
   useEffect(() => {
@@ -106,13 +122,21 @@ export default withPageAuthRequired(function Profile() {
               type="submit"
               value={'Submit'}
             />
+          </form>
+          <DeleteUserDialog
+            removeUser={() => deleteUser(user?.sub)}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
+          {user && typeof user.sub === 'string' && (
             <button
               className="my-4 w-fit cursor-pointer rounded bg-red-700 p-2 text-sm font-semibold text-white"
-              onClick={() => {}}
+              ref={deleteUserButtonRef}
+              onClick={() => setIsOpen(true)}
             >
               Deletar usuário
             </button>
-          </form>
+          )}
         </div>
       )}
     </DashboardLayout>

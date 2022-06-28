@@ -20,7 +20,7 @@ export default withPageAuthRequired(function Index() {
     );
 
     if (userInfo === undefined || !userInfo.exists()) {
-      router.push('completeRegistration');
+      router.push('/registration/completeRegistration');
     } else {
       setUserInfo(userInfo);
       if (userInfo.data().userType === 'founder') {

@@ -4,14 +4,10 @@ import React from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
-import { CompanyFormValues } from '@/types/companyTypes';
-
-export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
-
 export function StageSelector({
   register,
 }: {
-  register: UseFormRegister<CompanyFormValues>;
+  register: UseFormRegister<any>;
 }) {
   const [values] = useCollection(
     query(collection(getFirestore(app), 'stages'), orderBy('value'))

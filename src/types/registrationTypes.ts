@@ -11,4 +11,5 @@ export type RegistrationFormValues = {
   model: string;
   state: string;
   linkedin: string;
+  logo: FileList;
 };

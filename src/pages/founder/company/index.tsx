@@ -17,9 +17,10 @@ import { StageSelector } from '../../../components/StageSelector';
 import { TechSelector } from '../../../components/TechSelector';
 import { CompanyFormValues } from '../../../types/companyTypes';
 
-export default withPageAuthRequired(function Profile() {
+export default withPageAuthRequired(function Company() {
   const [logoURL, setLogoURL] = useState<string>('');
   const [success, setSuccess] = useState(false);
+  const [file, setFile] = useState<File>();
 
   const { user } = useUser();
   const { userInfo } = useUserInfo();
@@ -32,7 +33,7 @@ export default withPageAuthRequired(function Profile() {
   } = useForm<CompanyFormValues>();
 
   const [companyInfo] = useDocument(
-    doc(getFirestore(app), 'companies', userInfo.data().companyId)
+    doc(getFirestore(app), 'companies', userInfo?.data().companyId ?? 'a')
   );
 
   const updateUser = async (data: {
@@ -47,26 +48,35 @@ export default withPageAuthRequired(function Profile() {
     linkedin: string;
     logo: FileList;
   }) => {
-    const iconRef = ref(
-      getStorage(),
-      `companies/${userInfo?.data().companyId}/logo.${data.logo[0]?.type
-        .split('/')
-        .pop()}`
-    );
-    data.logo[0]?.arrayBuffer().then((buffer) => {
-      uploadBytes(iconRef, buffer, {
-        contentType: data.logo[0]?.type,
-      });
-    });
+    if (data.logo[0]) {
+      const logoPath = `logos/${
+        userInfo?.data().companyId
+      }/logo.${data.logo[0]?.type.split('/').pop()}`;
 
-    const tempURL = await getDownloadURL(iconRef);
+      const iconRef = ref(getStorage(), logoPath);
+
+      data.logo[0]
+        ?.arrayBuffer()
+        .then((buffer) => {
+          uploadBytes(iconRef, buffer, {
+            contentType: data.logo[0]?.type,
+          });
+        })
+        .then(() => {
+          updateDoc(
+            doc(getFirestore(app), 'companies', userInfo?.data().companyId),
+            {
+              logoPath,
+            }
+          );
+        });
+    }
 
     await updateDoc(
       doc(getFirestore(app), 'companies', userInfo?.data().companyId),
       {
         name: data.name,
         url: data.url,
-        logoURL: tempURL,
         description: data.description,
         stage: data.stage,
         sector: data.sector,
@@ -93,17 +103,29 @@ export default withPageAuthRequired(function Profile() {
         state: companyInfo?.data()?.state,
         linkedin: companyInfo?.data()?.linkedin,
       });
+
+      if (companyInfo.data().logoPath) {
+        const iconRef = ref(getStorage(), companyInfo.data().logoPath);
+        getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
+      }
     }
   }, [userInfo, user, companyInfo]);
 
+  useEffect(() => {
+    let objURL = '';
+    if (file instanceof File) {
+      objURL = URL.createObjectURL(file);
+      setLogoURL(objURL);
+    }
+
+    return () => {
+      if (file instanceof File) {
+        URL.revokeObjectURL(objURL);
+      }
+    };
+  }, [file]);
+
   const onSubmit = (data: CompanyFormValues) => updateUser(data);
-
-  const iconRef = ref(
-    getStorage(),
-    `companies/${userInfo?.data().companyId}/logo.png`
-  );
-
-  getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
 
   return (
     <DashboardLayout type={LayoutType.founder}>
@@ -116,13 +138,14 @@ export default withPageAuthRequired(function Profile() {
               <div className="flex w-full flex-col">
                 <label className="text-xs text-slate-600">Company Logo</label>
                 {logoURL && (
-                  <div className="mt-2">
+                  <div className="mt-2 rounded">
                     <Image
                       width={75}
                       height={75}
                       objectFit="cover"
                       src={logoURL}
                       alt={'logo'}
+                      className="rounded"
                     />
                   </div>
                 )}
@@ -131,6 +154,12 @@ export default withPageAuthRequired(function Profile() {
                   {...register('logo')}
                   type="file"
                   name="logo"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0] instanceof Blob) {
+                      setFile(e.target.files[0]);
+                    }
+                  }}
+                  accept="image/*"
                 />
               </div>
             </div>
@@ -177,9 +206,7 @@ export default withPageAuthRequired(function Profile() {
             <div className="flex justify-center gap-4">
               <DistModelSelector register={register} />
 
-              <div className="mt-2 flex w-1/2 flex-col">
-                <StateSelect register={register} />
-              </div>
+              <StateSelect register={register} />
             </div>
 
             <div className="mt-2 flex w-full flex-col">
@@ -207,12 +234,6 @@ export default withPageAuthRequired(function Profile() {
               type="submit"
               value={'Submit'}
             />
-            <button
-              className="my-4 w-fit cursor-pointer rounded bg-red-700 p-2 text-sm font-semibold text-white"
-              onClick={() => {}}
-            >
-              Deletar usuário
-            </button>
           </form>
         </div>
       )}

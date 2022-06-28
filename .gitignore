@@ -35,3 +35,7 @@ local
 .vercel
 sendgrid.env
 sendgrid.env
+
+# cypress
+cypress.config.ts
+/cypress

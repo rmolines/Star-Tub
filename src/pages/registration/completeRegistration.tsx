@@ -5,18 +5,27 @@ import {
   doc,
   getFirestore,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import { app } from 'firebaseConfig';
+import Image from 'next/image';
 import router from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { DistModelSelector } from '@/components/DistModelSelector';
+import { SectorSelect } from '@/components/SectorSelect';
+import { StageSelector } from '@/components/StageSelector';
 import StateSelect from '@/components/StateSelect';
+import { TechSelector } from '@/components/TechSelector';
 
 import { RegistrationFormValues } from '../../types/registrationTypes';
 
 function CompleteRegistration() {
-  const { user, error, isLoading } = useUser();
+  const [preview, setPreview] = useState('');
+  const [file, setFile] = useState<File>();
+  const { user } = useUser();
   const {
     register,
     handleSubmit,
@@ -39,6 +48,22 @@ function CompleteRegistration() {
       linkedin: data.linkedin,
     });
 
+    const logoPath = `logos/${company.id}/logo.${data.logo[0]?.type
+      .split('/')
+      .pop()}`;
+
+    await updateDoc(doc(getFirestore(app), `companies/${company.id}`), {
+      logoPath,
+    });
+
+    const iconRef = ref(getStorage(), logoPath);
+
+    data.logo[0]?.arrayBuffer().then((buffer) =>
+      uploadBytes(iconRef, buffer, {
+        contentType: data.logo[0]?.type,
+      })
+    );
+
     await setDoc(
       doc(
         getFirestore(app),
@@ -57,8 +82,19 @@ function CompleteRegistration() {
 
   const onSubmit = (data: RegistrationFormValues) => createUser(data);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
+  useEffect(() => {
+    let objURL = '';
+    if (file instanceof File) {
+      objURL = URL.createObjectURL(file);
+      setPreview(objURL);
+    }
+
+    return () => {
+      if (file instanceof File) {
+        URL.revokeObjectURL(objURL);
+      }
+    };
+  }, [file]);
 
   return (
     <div className="flex h-screen justify-center bg-slate-50 p-4">
@@ -71,39 +107,69 @@ function CompleteRegistration() {
           </h1>
         </div>
 
-        <form className="mt-4 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="mt-4 flex flex-col text-slate-500"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="mt-2 flex w-full justify-start gap-2">
+            <div className="flex w-full flex-col">
+              <label className="text-xs text-slate-600">Company Logo</label>
+              {preview !== '' && (
+                <div className="mt-2">
+                  <Image
+                    width={75}
+                    height={75}
+                    objectFit="cover"
+                    src={preview}
+                    alt={'logo'}
+                  />
+                </div>
+              )}
+              <input
+                className="mt-2 w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
+                {...register('logo')}
+                type="file"
+                name="logo"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0] instanceof Blob) {
+                    setFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </div>
+          </div>
           {/* register your input into the hook by invoking the "register" function */}
           <div className="flex justify-center gap-2">
             <div className="flex w-1/2 flex-col">
-              <label className="text-sm">First Name</label>
+              <label className="text-xs">First Name</label>
               <input
                 type="text"
                 {...register('firstName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-400"
+                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
               />
             </div>
             <div className="flex w-1/2 flex-col">
-              <label className="text-sm">Last Name</label>
+              <label className="text-xs">Last Name</label>
               <input
                 type="text"
                 {...register('lastName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-400"
+                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
               />
             </div>
           </div>
 
           <div className="mt-2 flex justify-center gap-2">
             <div className="flex w-full flex-col">
-              <label className="text-sm">Company Name</label>
+              <label className="text-xs">Company Name</label>
               <input
                 type="text"
                 {...register('companyName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-400"
+                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
               />
             </div>
 
             <div className="flex w-full flex-col">
-              <label className="text-sm">Type</label>
+              <label className="text-xs">Type</label>
               <select
                 {...register('userType')}
                 className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
@@ -115,7 +181,7 @@ function CompleteRegistration() {
           </div>
 
           <div className="mt-2 flex w-full flex-col">
-            <label className="text-sm">Website URL</label>
+            <label className="text-xs">Website URL</label>
             <input
               type={'url'}
               {...register('url')}
@@ -126,7 +192,7 @@ function CompleteRegistration() {
           {watch('userType') === 'founder' && (
             <>
               <div className="mt-2 flex w-full flex-col">
-                <label className="text-sm">Short description</label>
+                <label className="text-xs">Short description</label>
                 <textarea
                   rows={4}
                   {...register('description')}
@@ -135,56 +201,23 @@ function CompleteRegistration() {
               </div>
 
               <div className="mt-2 flex w-full flex-col">
-                <label className="text-sm">Company stage</label>
-                <select
-                  {...register('stage')}
-                  className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                >
-                  <option value={'pre-seed'}>Pre-seed</option>
-                  <option value={'seed'}>Seed</option>
-                  <option value={'series-a'}>Series A</option>
-                  <option value={'series-b'}>Series B</option>
-                  <option value={'series-c'}>Series C+</option>
-                </select>
+                <StageSelector register={register} />
               </div>
 
               <div className="flex justify-center gap-4">
-                <div className="mt-2 flex w-1/2 flex-col">
-                  <label className="text-sm">Sector</label>
-                  <input
-                    type={'text'}
-                    {...register('sector')}
-                    className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                  />
-                </div>
+                <SectorSelect register={register} />
 
-                <div className="mt-2 flex w-1/2 flex-col">
-                  <label className="text-sm">Technology</label>
-                  <input
-                    type={'text'}
-                    {...register('tech')}
-                    className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                  />
-                </div>
+                <TechSelector register={register} />
               </div>
 
               <div className="flex justify-center gap-4">
-                <div className="mt-2 flex w-1/2 flex-col">
-                  <label className="text-sm">Business model</label>
-                  <input
-                    type={'text'}
-                    {...register('model')}
-                    className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                  />
-                </div>
+                <DistModelSelector register={register} />
 
-                <div className="mt-2 flex w-1/2 flex-col">
-                  <StateSelect register={register} />
-                </div>
+                <StateSelect register={register} />
               </div>
 
               <div className="mt-2 flex w-full flex-col">
-                <label className="text-sm">Founder&apos;s LinkedIn</label>
+                <label className="text-xs">Founder&apos;s LinkedIn</label>
                 <input
                   type={'url'}
                   {...register('linkedin')}

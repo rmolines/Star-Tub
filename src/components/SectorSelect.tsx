@@ -3,8 +3,6 @@ import { app } from 'firebaseConfig';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
-import { CompanyFormValues } from '@/types/companyTypes';
-
 export const sectors = [
   'Adtech',
   'Aerospace',
@@ -60,11 +58,7 @@ export const sectors = [
   'Adtechs, Construtech e Proptech',
 ];
 
-export function SectorSelect({
-  register,
-}: {
-  register: UseFormRegister<CompanyFormValues>;
-}) {
+export function SectorSelect({ register }: { register: UseFormRegister<any> }) {
   const [values] = useCollection(
     query(collection(getFirestore(app), 'sectors'), orderBy('value'))
   );

@@ -40,7 +40,7 @@ function StateSelect({ register }: { register: UseFormRegister<any> }) {
   );
 
   return (
-    <>
+    <div className="mt-2 flex w-1/2 flex-col">
       <label className="text-xs text-slate-600">State</label>
       <select
         {...register('state')}
@@ -52,7 +52,7 @@ function StateSelect({ register }: { register: UseFormRegister<any> }) {
           </option>
         ))}
       </select>
-    </>
+    </div>
   );
 }
 

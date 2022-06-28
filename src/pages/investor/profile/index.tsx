@@ -29,7 +29,7 @@ export default withPageAuthRequired(function Profile() {
     doc(
       getFirestore(app),
       'companies',
-      userInfo !== undefined ? userInfo.data().companyId : 'wre'
+      userInfo ? userInfo.data().companyId : 'wre'
     )
   );
 

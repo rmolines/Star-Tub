@@ -35,7 +35,7 @@ const AnsweredBox = (props: Props) => {
         <TextareaAutosize
           readOnly
           className="w-full resize-none border-0 bg-slate-100 pt-1 text-sm font-bold text-slate-700 outline-none"
-          defaultValue={`${props.index + 1}. ${props.question}`}
+          defaultValue={`${props.question}`}
         />
         <QuestionMenu
           showEditMenu={showEditMenu}
