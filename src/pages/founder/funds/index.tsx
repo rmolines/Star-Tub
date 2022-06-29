@@ -125,7 +125,7 @@ function Funds() {
   }, []);
 
   return (
-    <DashboardLayout type={LayoutType.investor}>
+    <DashboardLayout type={LayoutType.founder}>
       <div className="grid grid-cols-cards gap-4">
         {companiesState &&
           Object.keys(companiesState)?.map((e) => (
