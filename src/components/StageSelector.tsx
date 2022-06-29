@@ -4,6 +4,8 @@ import React from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { UseFormRegister } from 'react-hook-form';
 
+export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
+
 export function StageSelector({
   register,
 }: {

@@ -36,6 +36,13 @@ function CompleteRegistration() {
   });
 
   const createUser = async (data: RegistrationFormValues) => {
+    let companyType;
+    if (data.userType === 'founder') {
+      companyType = 'startup';
+    } else {
+      companyType = 'fund';
+    }
+
     const company = await addDoc(collection(getFirestore(app), 'companies'), {
       name: data.companyName,
       url: data.url,
@@ -46,6 +53,7 @@ function CompleteRegistration() {
       model: data.model,
       state: data.state,
       linkedin: data.linkedin,
+      companyType,
     });
 
     const logoPath = `logos/${company.id}/logo.${data.logo[0]?.type
@@ -122,6 +130,7 @@ function CompleteRegistration() {
                     objectFit="cover"
                     src={preview}
                     alt={'logo'}
+                    className="rounded"
                   />
                 </div>
               )}

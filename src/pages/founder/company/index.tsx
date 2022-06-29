@@ -1,10 +1,9 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { doc, getFirestore, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { useDocument } from 'react-firebase-hooks/firestore';
 import { useForm } from 'react-hook-form';
 
 import StateSelect from '@/components/StateSelect';
@@ -23,7 +22,7 @@ export default withPageAuthRequired(function Company() {
   const [file, setFile] = useState<File>();
 
   const { user } = useUser();
-  const { userInfo } = useUserInfo();
+  const { userInfo, loading } = useUserInfo();
 
   const {
     register,
@@ -31,10 +30,6 @@ export default withPageAuthRequired(function Company() {
     reset,
     formState: { errors },
   } = useForm<CompanyFormValues>();
-
-  const [companyInfo] = useDocument(
-    doc(getFirestore(app), 'companies', userInfo?.data().companyId ?? 'a')
-  );
 
   const updateUser = async (data: {
     name: string;
@@ -87,26 +82,34 @@ export default withPageAuthRequired(function Company() {
     setSuccess(true);
   };
 
-  useEffect(() => {
-    if (companyInfo?.exists()) {
-      reset({
-        name: companyInfo?.data()?.name,
-        url: companyInfo?.data()?.url,
-        description: companyInfo?.data()?.description,
-        stage: companyInfo?.data()?.stage,
-        sector: companyInfo?.data()?.sector,
-        tech: companyInfo?.data()?.tech,
-        model: companyInfo?.data()?.model,
-        state: companyInfo?.data()?.state,
-        linkedin: companyInfo?.data()?.linkedin,
-      });
+  const fillCompanyInfo = async () => {
+    const companyInfo = await getDoc(
+      doc(getFirestore(app), 'companies', userInfo.data().companyId)
+    );
 
-      if (companyInfo.data().logoPath) {
-        const iconRef = ref(getStorage(), companyInfo.data().logoPath);
-        getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
-      }
+    reset({
+      name: companyInfo?.data()?.name,
+      url: companyInfo?.data()?.url,
+      description: companyInfo?.data()?.description,
+      stage: companyInfo?.data()?.stage,
+      sector: companyInfo?.data()?.sector,
+      tech: companyInfo?.data()?.tech,
+      model: companyInfo?.data()?.model,
+      state: companyInfo?.data()?.state,
+      linkedin: companyInfo?.data()?.linkedin,
+    });
+
+    if (companyInfo?.data()?.logoPath) {
+      const iconRef = ref(getStorage(), companyInfo?.data()?.logoPath);
+      getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
     }
-  }, [userInfo, user, companyInfo]);
+  };
+
+  useEffect(() => {
+    if (!loading && userInfo && userInfo.exists()) {
+      fillCompanyInfo();
+    }
+  }, [loading, userInfo]);
 
   useEffect(() => {
     let objURL = '';

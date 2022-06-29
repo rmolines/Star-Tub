@@ -5,6 +5,7 @@ import { AiOutlineForm } from 'react-icons/ai';
 import { BiArrowBack, BiFace, BiLogOut } from 'react-icons/bi';
 import { BsBriefcase } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { TbBusinessplan } from 'react-icons/tb';
 
 import { useUserInfo } from '@/context/UserInfoContext';
 import { Meta } from '@/layout/Meta';
@@ -33,6 +34,11 @@ const founderMenuItems = [
     title: 'Empresa',
     icon: <BsBriefcase />,
   },
+  {
+    href: '/founder/funds/',
+    title: 'Fundos',
+    icon: <TbBusinessplan />,
+  },
   // {
   //   href: '/founder/myinvestors/',
   //   title: 'Investidores',
@@ -46,11 +52,11 @@ const investorMenuItems = [
     title: 'Empresas',
     icon: <BsBriefcase />,
   },
-  // {
-  //   href: '/investor/fund/',
-  //   title: 'Fundo',
-  //   icon: <BsCurrencyDollar />,
-  // },
+  {
+    href: '/investor/funds/',
+    title: 'Fundos',
+    icon: <TbBusinessplan />,
+  },
 ];
 
 const DashboardLayout = (props: IMainProps) => {
@@ -67,24 +73,24 @@ const DashboardLayout = (props: IMainProps) => {
   }[props.type];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Meta
         title="Clam"
         description="Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework."
       />
-      <div className="relative flex md:flex-row">
+      <div className="relative flex w-screen max-w-screen-xl items-center justify-center md:flex-row">
         <aside
-          className={`fixed ${
+          className={`${
             showSideBar ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform duration-300 h-screen border-r-1 border-slate-200 bg-slate-50 p-2 md:w-60 md:translate-x-0 z-10`}
+          } transition-transform duration-300 h-screen md:w-72 md:translate-x-0 z-10 fixed left-0 md:relative md:bg-white bg-neutral-200`}
         >
-          <nav>
-            <ul>
-              <li className="flex items-center space-x-2  p-4 text-slate-900">
+          <nav className="sticky top-0 p-6">
+            <ul className="">
+              <li className="mb-8 flex items-center gap-2 text-neutral-900">
                 <BiFace className="hidden h-12 w-12 rounded-full dark:bg-slate-500 md:flex" />
                 <div>
                   {userInfo && userInfo?.data() && (
-                    <h2 className="font-semibold lg:text-lg">
+                    <h2 className="font-semibold ">
                       {`${userInfo?.data().firstName} ${
                         userInfo?.data().lastName
                       }`}
@@ -110,51 +116,48 @@ const DashboardLayout = (props: IMainProps) => {
                 )}
               </li>
               {menuItems.map(({ href, title, icon }) => (
-                <li className="m-2" key={title}>
+                <li className="ml-2 mb-4" key={title}>
                   <Link href={href}>
+                    <div
+                      className={`${
+                        router.asPath === href ? '' : ''
+                      } flex rounded`}
+                    >
+                      <a
+                        onClick={() => {
+                          setShowSideBar(false);
+                        }}
+                        className="flex cursor-pointer items-center space-x-4 border-none text-sm text-neutral-900"
+                      >
+                        <span className="text-2xl">{icon}</span>
+                        <div>{title}</div>
+                      </a>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+              <li className="border-t-1 border-neutral-200" key={'Logout'}>
+                <Link href={'/api/auth/logout/'}>
+                  <div className={`flex rounded ml-2 mt-4`}>
                     <a
                       onClick={() => {
                         setShowSideBar(false);
                       }}
-                      className={`${
-                        router.asPath === href
-                          ? 'bg-slate-200 text-slate-800'
-                          : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
-                      } p-2 flex rounded cursor-pointer border-none`}
+                      className="flex cursor-pointer items-center space-x-4 border-none text-sm text-neutral-900"
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="ml-2 text-lg">{icon}</span>
-                        <div>{title}</div>
-                      </div>
-                    </a>
-                  </Link>
-                </li>
-              ))}
-              <li
-                className="m-2 border-t-1 border-slate-200 pt-2"
-                key={'Logout'}
-              >
-                <Link href={'/api/auth/logout/'}>
-                  <a
-                    onClick={() => {
-                      setShowSideBar(false);
-                    }}
-                    className={`${'bg-slate-50 hover:bg-slate-100 text-slate-600'} p-2 flex rounded cursor-pointer border-none`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="ml-2 text-lg">
+                      <span className="g-slate-400 text-2xl">
                         <BiLogOut />
                       </span>
                       <div>Logout</div>
-                    </div>
-                  </a>
+                    </a>
+                  </div>
                 </Link>
               </li>
             </ul>
           </nav>
         </aside>
-        <main className="w-full antialiased md:ml-60">
-          <div className="mx-auto h-screen max-w-screen-md">
+        <main className="w-full antialiased">
+          <div className="mx-auto h-screen">
             {/* Children */}
             <div className="content">
               <div className="mb-4 flex items-center gap-2 px-4 pt-5">

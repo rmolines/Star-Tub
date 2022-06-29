@@ -20,6 +20,8 @@ module.exports = withBundleAnalyzer({
       'firebasestorage.googleapis.com',
       'picsum.photos',
       'blog.iprocess.com.br',
+      'localhost',
+      '0.0.0.0',
     ],
   },
 

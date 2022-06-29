@@ -8,9 +8,7 @@ import {
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { GoLinkExternal } from 'react-icons/go';
 
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
@@ -26,8 +24,7 @@ type CompaniesDictType = {
   };
 };
 
-function Companies() {
-  const router = useRouter();
+function Funds() {
   const [companiesState, setCompaniesState] =
     useState<CompaniesDictType | null>(null);
 
@@ -48,7 +45,7 @@ function Companies() {
     const companies = getDocs(
       query(
         collection(getFirestore(app), 'companies'),
-        where('companyType', '==', 'startup')
+        where('companyType', '==', 'fund')
       )
     );
 
@@ -133,10 +130,10 @@ function Companies() {
         {companiesState &&
           Object.keys(companiesState)?.map((e) => (
             <div
-              className="min-h-48 flex flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow"
+              className="min-h-48 flex gap-4 rounded bg-white p-4 text-slate-900 shadow drop-shadow"
               key={e}
             >
-              <div className="flex w-full items-center justify-between">
+              <div className="flex items-center justify-between">
                 <div className="relative">
                   <Image
                     src={
@@ -153,17 +150,17 @@ function Companies() {
                     quality={100}
                   />
                 </div>
-                <div
+                {/* <div
                   onClick={() => router.push(`companies/company/${e}`)}
                   className="text-slate-00 cursor-pointer rounded-full p-3 text-lg hover:bg-slate-200"
                 >
                   <GoLinkExternal />
-                </div>
+                </div> */}
               </div>
               <div className="flex h-full flex-col justify-between text-sm">
                 <label className="text-xs text-slate-500">Nome</label>
                 <div className="">{companiesState[e]?.name}</div>
-                <label className="text-xs text-slate-500">Setor</label>
+                {/* <label className="text-xs text-slate-500">Setor</label>
                 <div className="">{companiesState[e]?.sector}</div>
                 <label className="text-xs text-slate-500">Tech</label>
                 <div className="">{companiesState[e]?.tech}</div>
@@ -172,7 +169,7 @@ function Companies() {
                 <label className="text-xs text-slate-500">Estágio</label>
                 <div className="">{companiesState[e]?.stage}</div>
                 <label className="text-xs text-slate-500">Estado</label>
-                <div className="">{companiesState[e]?.state}</div>
+                <div className="">{companiesState[e]?.state}</div> */}
               </div>
             </div>
           ))}
@@ -181,4 +178,4 @@ function Companies() {
   );
 }
 
-export default Companies;
+export default Funds;

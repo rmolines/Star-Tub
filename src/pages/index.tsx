@@ -12,8 +12,6 @@ export default withPageAuthRequired(function Index() {
     // console.log(
     //   userInfo?.data(),
     //   userInfo?.exists(),
-    //   user,
-    //   user?.sub,
     //   loading,
     //   firebaseError,
     //   auth0Error
