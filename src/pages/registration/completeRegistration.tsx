@@ -215,7 +215,7 @@ function CompleteRegistration() {
                 <StageSelector register={register} />
               </div>
               {/* errors will return when field validation fails  */}
-              {errors.stage && <span>This field is required</span>}
+              {/* {errors.stage && <span>This field is required</span>} */}
 
               <div className="flex justify-center gap-4">
                 <SectorSelect register={register} />

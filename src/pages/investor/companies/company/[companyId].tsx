@@ -17,6 +17,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BiLeftArrowAlt } from 'react-icons/bi';
 import { BsPlusCircle } from 'react-icons/bs';
+import { GiProgression } from 'react-icons/gi';
+import { GrOverview, GrTechnology } from 'react-icons/gr';
+import { TbBuildingStore } from 'react-icons/tb';
 
 import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
@@ -133,7 +136,7 @@ export default function Company() {
     <DashboardLayout type={LayoutType.investor}>
       {!loading && companyDict && (
         <>
-          <div className="mb-4 flex items-center gap-4">
+          <div className="mb-8 flex items-center gap-4">
             <div
               className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
               onClick={() => router.back()}
@@ -162,64 +165,84 @@ export default function Company() {
               {companyDict.name}
             </div>
           </div>
-          <div className="min-h-48 flex flex-col justify-between gap-2 rounded border-1 border-slate-300 p-4 text-slate-900">
-            <div className="flex h-full flex-col justify-between text-sm">
-              <label className="text-xs text-slate-500">Setor</label>
-              <div className="">{companyDict.sector}</div>
-              <label className="text-xs text-slate-500">Tech</label>
-              <div className="">{companyDict.tech}</div>
-              <label className="text-xs text-slate-500">Modelo</label>
-              <div className="">{companyDict.model}</div>
-              <label className="text-xs text-slate-500">Estágio</label>
-              <div className="">{companyDict.stage}</div>
-              <label className="text-xs text-slate-500">Estado</label>
-              <div className="">{companyDict.state}</div>
-            </div>
-          </div>
-
-          {/* FAQ */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold">Perguntas</h1>
-
-              <div className="flex items-center text-2xl">
-                <BsPlusCircle
-                  onClick={() => {
-                    setCreatingQuestion(true);
-                  }}
-                  className="cursor-pointer"
-                />
+          <div className="px-16">
+            <div className="min-h-48 flex w-full flex-row justify-between p-4 text-slate-900">
+              <div className="flex flex-col">
+                <label className="text flex items-center gap-1 text-xs text-slate-500">
+                  Estágio
+                  <GiProgression />
+                </label>
+                <div className="text-lg font-medium">{companyDict.stage}</div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text flex items-center gap-1 text-xs text-slate-500">
+                  Modelo
+                  <TbBuildingStore />
+                </label>
+                <div className="text-lg font-medium">{companyDict.model}</div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text flex items-center gap-1 text-xs text-slate-500">
+                  Setor
+                  <GrOverview />
+                </label>
+                <div className="text-lg font-medium">{companyDict.sector}</div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text flex items-center gap-1 text-xs text-slate-500">
+                  Tech
+                  <GrTechnology />
+                </label>
+                <div className="text-lg font-medium">{companyDict.tech}</div>
               </div>
             </div>
 
-            {/* Caixa para criar pergunta */}
-            {creatingQuestion && (
-              <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
-                <div className="font-semibold">Nova pergunta</div>
-                <span>
-                  <NewQuestion
-                    submitFunc={createQuestion}
-                    cancelFunc={setCreatingQuestion}
-                  />
-                </span>
-              </div>
-            )}
+            {/* FAQ */}
+            <div className="">
+              <div className="mt-8">
+                <div className="flex items-center justify-between">
+                  <h1 className="text-xl font-semibold">Perguntas</h1>
 
-            {/* Perguntas respondidas */}
-            {companyDict.questions.length > 0 && (
-              <span>
-                {companyDict.questions.map((docShadow, index) => (
-                  <QuestionBox
-                    key={docShadow.id}
-                    id={docShadow.id}
-                    index={index}
-                    question={docShadow.data().question}
-                    answer={docShadow.data().answer}
-                    unanswered={false}
-                  />
-                ))}
-              </span>
-            )}
+                  <div className="flex items-center text-2xl">
+                    <BsPlusCircle
+                      onClick={() => {
+                        setCreatingQuestion(true);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Caixa para criar pergunta */}
+                {creatingQuestion && (
+                  <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
+                    <div className="font-semibold">Nova pergunta</div>
+                    <span>
+                      <NewQuestion
+                        submitFunc={createQuestion}
+                        cancelFunc={setCreatingQuestion}
+                      />
+                    </span>
+                  </div>
+                )}
+
+                {/* Perguntas respondidas */}
+                {companyDict.questions.length > 0 && (
+                  <span>
+                    {companyDict.questions.map((docShadow, index) => (
+                      <QuestionBox
+                        key={docShadow.id}
+                        id={docShadow.id}
+                        index={index}
+                        question={docShadow.data().question}
+                        answer={docShadow.data().answer}
+                        unanswered={false}
+                      />
+                    ))}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </>
       )}

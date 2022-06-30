@@ -10,7 +10,10 @@ import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { GiProgression } from 'react-icons/gi';
 import { GoLinkExternal } from 'react-icons/go';
+import { GrOverview, GrTechnology } from 'react-icons/gr';
+import { TbBuildingStore } from 'react-icons/tb';
 
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
@@ -136,43 +139,59 @@ function Companies() {
               className="min-h-48 flex flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow"
               key={e}
             >
-              <div className="flex w-full items-center justify-between">
-                <div className="relative">
-                  <Image
-                    src={
-                      companiesState[e]?.logoURL ??
-                      'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
-                    }
-                    placeholder={'blur'}
-                    blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
-                    width={40}
-                    height={40}
-                    alt="logo"
-                    className="rounded"
-                    objectFit="cover"
-                    quality={100}
-                  />
-                </div>
-                <div
-                  onClick={() => router.push(`companies/company/${e}`)}
-                  className="text-slate-00 cursor-pointer rounded-full p-3 text-lg hover:bg-slate-200"
-                >
-                  <GoLinkExternal />
+              <div className="mb-2 flex w-full items-center justify-center gap-4 border-b-1 border-slate-200 pb-2">
+                <div className="flex w-full flex-row items-center justify-center gap-2">
+                  <div className="relative">
+                    <Image
+                      src={
+                        companiesState[e]?.logoURL ??
+                        'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
+                      }
+                      placeholder={'blur'}
+                      blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
+                      width={40}
+                      height={40}
+                      alt="logo"
+                      className="rounded"
+                      quality={100}
+                    />
+                  </div>
+                  <div className="text-xl font-semibold">
+                    <div className="">{companiesState[e]?.name}</div>
+                  </div>
                 </div>
               </div>
               <div className="flex h-full flex-col justify-between text-sm">
-                <label className="text-xs text-slate-500">Nome</label>
-                <div className="">{companiesState[e]?.name}</div>
-                <label className="text-xs text-slate-500">Setor</label>
-                <div className="">{companiesState[e]?.sector}</div>
-                <label className="text-xs text-slate-500">Tech</label>
-                <div className="">{companiesState[e]?.tech}</div>
-                <label className="text-xs text-slate-500">Modelo</label>
-                <div className="">{companiesState[e]?.model}</div>
-                <label className="text-xs text-slate-500">Estágio</label>
-                <div className="">{companiesState[e]?.stage}</div>
-                <label className="text-xs text-slate-500">Estado</label>
-                <div className="">{companiesState[e]?.state}</div>
+                <label className="flex items-center gap-1 text-xs text-slate-500">
+                  Estágio
+                  <GiProgression />
+                </label>
+                <div className="mb-1">{companiesState[e]?.stage}</div>
+                <label className="flex items-center gap-1 text-xs text-slate-500">
+                  Modelo
+                  <TbBuildingStore />
+                </label>
+                <div className="mb-1">{companiesState[e]?.model}</div>
+                <label className="flex items-center gap-1 text-xs text-slate-500">
+                  Setor
+                  <GrOverview />
+                </label>
+                <div className="mb-1">{companiesState[e]?.sector}</div>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <label className="flex items-center gap-1 text-xs text-slate-500">
+                      Tech
+                      <GrTechnology />
+                    </label>
+                    <div className="mb-1">{companiesState[e]?.tech}</div>
+                  </div>
+                  <div
+                    onClick={() => router.push(`companies/company/${e}`)}
+                    className="cursor-pointer p-1 text-lg text-slate-400 hover:text-slate-800"
+                  >
+                    <GoLinkExternal />
+                  </div>
+                </div>
               </div>
             </div>
           ))}
