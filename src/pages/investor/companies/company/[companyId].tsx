@@ -33,6 +33,7 @@ type CopmanyDictType = {
   model: string;
   state: string;
   stage: string;
+  description: string;
   questions: QueryDocumentSnapshot<DocumentData>[];
 };
 
@@ -118,6 +119,7 @@ export default function Company() {
         model: modelsDict[company.get('model')] ?? 'N/A',
         state: statesDict[company.get('state')] ?? 'N/A',
         stage: stagesDict[company.get('stage')] ?? 'N/A',
+        description: company.get('description'),
         questions: questions.docs,
       };
       setCompanyDict(companyD);
@@ -136,33 +138,38 @@ export default function Company() {
     <DashboardLayout type={LayoutType.investor}>
       {!loading && companyDict && (
         <>
-          <div className="mb-8 flex items-center gap-4">
-            <div
-              className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
-              onClick={() => router.back()}
-            >
-              <BiLeftArrowAlt />
+          <div className="mb-8">
+            <div className="mb-4 flex items-center gap-4">
+              <div
+                className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
+                onClick={() => router.back()}
+              >
+                <BiLeftArrowAlt />
+              </div>
+              {companyDict.logoURL ? (
+                <Image
+                  src={companyDict.logoURL}
+                  width={40}
+                  height={40}
+                  alt="logo"
+                  className="rounded"
+                  quality={100}
+                />
+              ) : (
+                <Image
+                  src={'https://picsum.photos/40'}
+                  width={40}
+                  height={40}
+                  alt="logo"
+                  className="rounded"
+                />
+              )}
+              <div className="text-2xl font-bold text-slate-800">
+                {companyDict.name}
+              </div>
             </div>
-            {companyDict.logoURL ? (
-              <Image
-                src={companyDict.logoURL}
-                width={40}
-                height={40}
-                alt="logo"
-                className="rounded"
-                quality={100}
-              />
-            ) : (
-              <Image
-                src={'https://picsum.photos/40'}
-                width={40}
-                height={40}
-                alt="logo"
-                className="rounded"
-              />
-            )}
-            <div className="text-2xl font-bold text-slate-800">
-              {companyDict.name}
+            <div className="mx-6 border-l-2 border-slate-400 px-2 text-sm italic">
+              {companyDict.description}
             </div>
           </div>
           <div className="px-16">
@@ -200,7 +207,7 @@ export default function Company() {
             {/* FAQ */}
             <div className="">
               <div className="mt-8">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-start gap-4">
                   <h1 className="text-xl font-semibold">Perguntas</h1>
 
                   <div className="flex items-center text-2xl">
@@ -208,7 +215,7 @@ export default function Company() {
                       onClick={() => {
                         setCreatingQuestion(true);
                       }}
-                      className="cursor-pointer"
+                      className="cursor-pointer text-slate-300 hover:text-slate-800"
                     />
                   </div>
                 </div>

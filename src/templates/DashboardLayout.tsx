@@ -177,7 +177,7 @@ const DashboardLayout = (props: IMainProps) => {
                   {router.asPath === '/profile/' && 'Profile'}
                 </h1>
               </div>
-              <div className="px-4">{props.children}</div>
+              <div className="h-full px-4">{props.children}</div>
             </div>
 
             {/* Footer */}

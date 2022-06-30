@@ -132,11 +132,11 @@ function Companies() {
 
   return (
     <DashboardLayout type={LayoutType.investor}>
-      <div className="grid grid-cols-cards gap-4">
+      <div className="grid h-full grid-cols-cards gap-4">
         {companiesState &&
           Object.keys(companiesState)?.map((e) => (
             <div
-              className="min-h-48 flex flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow"
+              className="min-h-48 flex h-fit flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow"
               key={e}
             >
               <div className="mb-2 flex w-full items-center justify-center gap-4 border-b-1 border-slate-200 pb-2">

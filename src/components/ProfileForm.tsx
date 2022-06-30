@@ -56,7 +56,7 @@ export function ProfileForm() {
   const onSubmit = (data: ProfileFormValues) => updateUser(data);
 
   return (
-    <div className="mt-8 px-20">
+    <div className="mt-8 md:px-20">
       {user && (
         <>
           <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
