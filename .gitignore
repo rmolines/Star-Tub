@@ -39,3 +39,6 @@ sendgrid.env
 # cypress
 cypress.config.ts
 /cypress
+
+#data
+/data
