@@ -1,7 +1,8 @@
 import { QueryDocumentSnapshot } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import Image from 'next/image';
 import router from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GiProgression } from 'react-icons/gi';
 import { GoLinkExternal } from 'react-icons/go';
 import { GrOverview, GrTechnology } from 'react-icons/gr';
@@ -14,6 +15,25 @@ function CompanyCard({
   company: QueryDocumentSnapshot<unknown> | undefined;
   id: string;
 }) {
+  const [logoURL, setLogoURL] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (company) {
+      // TODO fix this shit
+      const getLogoURL = async () => {
+        try {
+          const iconRef = ref(getStorage(), company.get('logoPath'));
+          getDownloadURL(iconRef)
+            .then((URL) => setLogoURL(URL))
+            .catch(() => null);
+        } catch (e) {
+          setLogoURL(undefined);
+        }
+      };
+      getLogoURL();
+    }
+  }, [company]);
+
   return (
     <div className="flex h-full flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow">
       <div className="mb-2 flex w-full items-center justify-between gap-4 border-b-1 border-slate-200 pb-2">
@@ -21,7 +41,7 @@ function CompanyCard({
           <div className="relative">
             <Image
               src={
-                // company?.get() ??
+                logoURL ??
                 'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
               }
               placeholder={'blur'}
@@ -30,6 +50,7 @@ function CompanyCard({
               height={40}
               alt="logo"
               className="rounded"
+              layout="fixed"
               quality={100}
             />
           </div>

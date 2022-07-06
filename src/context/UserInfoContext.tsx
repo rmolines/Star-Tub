@@ -60,7 +60,6 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     if (companyInfo && companyInfo.get('logoPath')) {
       const getLogoURL = async () => {
         const iconRef = ref(getStorage(), companyInfo.get('logoPath'));
-        console.log(companyInfo.get('logoPath'));
         getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
       };
       getLogoURL();

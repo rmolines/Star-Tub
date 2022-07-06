@@ -4,15 +4,10 @@ import { useEffect, useState } from 'react';
 
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { FilterDataType } from '@/types/companyTypes';
-import { getCompanies, populate } from '@/utils/functions';
+import { getCompanies } from '@/utils/functions';
 
 import CompanyCard from '../CompanyCard';
-import { models } from '../DistModelSelector';
 import { FilterForm } from '../FilterForm';
-import { sectors } from '../SectorSelect';
-import { stages } from '../StageSelector';
-import { states } from '../StateSelect';
-import { tech } from '../TechSelector';
 
 export default function Companies() {
   const router = useRouter();
@@ -37,11 +32,11 @@ export default function Companies() {
   // };
 
   useEffect(() => {
-    populate(tech, 'tech');
-    populate(sectors, 'sectors');
-    populate(states, 'states');
-    populate(stages, 'stages');
-    populate(models, 'models');
+    // populate(tech, 'tech');
+    // populate(sectors, 'sectors');
+    // populate(states, 'states');
+    // populate(stages, 'stages');
+    // populate(models, 'models');
     if (viewType) {
       getCompanies(filterData, setCompaniesState, viewType);
     }
