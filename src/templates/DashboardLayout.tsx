@@ -83,11 +83,11 @@ const DashboardLayout = (props: IMainProps) => {
         <aside
           className={`${
             showSideBar ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform duration-300 h-screen md:w-72 md:translate-x-0 z-10 fixed left-0 md:relative md:bg-white bg-neutral-200`}
+          } transition-transform flex flex-col items-center duration-300 h-screen md:w-72 md:translate-x-0 z-10 fixed left-0 md:relative md:bg-white bg-neutral-200`}
         >
           <nav className="sticky top-0 p-6">
             <ul className="">
-              <li className="mb-8 flex">
+              <li className="mb-8 flex pl-4">
                 <Link href={'fund/'}>
                   <a className="flex items-center gap-2 border-none text-slate-800">
                     {logoURL && (
@@ -126,7 +126,7 @@ const DashboardLayout = (props: IMainProps) => {
                 )}
               </li>
               {menuItems.map(({ href, title, icon }) => (
-                <li className="ml-2 mb-4" key={title}>
+                <li className="ml-2 mb-4 pl-4" key={title}>
                   <Link href={href}>
                     <div
                       className={`${
@@ -146,7 +146,10 @@ const DashboardLayout = (props: IMainProps) => {
                   </Link>
                 </li>
               ))}
-              <li className="border-t-1 border-neutral-200" key={'Profile'}>
+              <li
+                className="border-t-1 border-neutral-200 pl-4"
+                key={'Profile'}
+              >
                 <Link href={'profile/'}>
                   <div className={`flex rounded ml-2 mt-4`}>
                     <a className="flex cursor-pointer items-center space-x-4 border-none text-sm text-neutral-900">
@@ -158,7 +161,7 @@ const DashboardLayout = (props: IMainProps) => {
                   </div>
                 </Link>
               </li>
-              <li className="" key={'Logout'}>
+              <li className="pl-4" key={'Logout'}>
                 <Link href={'/api/auth/logout/'}>
                   <div className={`flex rounded ml-2 mt-4`}>
                     <a
