@@ -2,8 +2,8 @@ import { QuerySnapshot } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { FilterDataType } from '@/pages/investor/companies/companiesTypes';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
+import { FilterDataType } from '@/types/companyTypes';
 import { getCompanies } from '@/utils/functions';
 
 import CompanyCard from '../CompanyCard';

@@ -10,7 +10,7 @@ import {
 import { app } from 'firebaseConfig';
 import { SetStateAction } from 'react';
 
-import { FilterDataType } from '@/pages/investor/companies/companiesTypes';
+import { FilterDataType } from '@/types/companyTypes';
 
 export const getCompanies = async (
   filterData: FilterDataType | null,

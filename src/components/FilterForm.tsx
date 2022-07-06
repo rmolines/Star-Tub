@@ -1,10 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import {
-  FilterDataType,
-  FilterFormValues,
-} from '@/pages/investor/companies/companiesTypes';
+import { FilterDataType, FilterFormValues } from '@/types/companyTypes';
 
 import { DistModelSelector } from './DistModelSelector';
 import { SectorSelect } from './SectorSelect';
