@@ -1,7 +1,9 @@
 import { collection, getFirestore, orderBy, query } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { UseFormRegister } from 'react-hook-form';
+import { Control } from 'react-hook-form';
+
+import { ControllerSelect } from './ControllerSelect';
 
 export const sectors = [
   'Adtech',
@@ -58,24 +60,24 @@ export const sectors = [
   'Adtechs, Construtech e Proptech',
 ];
 
-export function SectorSelect({ register }: { register: UseFormRegister<any> }) {
+export function SectorSelect({
+  control,
+  isMulti = false,
+}: {
+  control: Control<any, object>;
+  isMulti?: boolean;
+}) {
   const [values] = useCollection(
-    query(collection(getFirestore(app), 'sectors'), orderBy('value'))
+    query(collection(getFirestore(app), 'sectors'), orderBy('order'))
   );
 
   return (
-    <div className="mt-2 flex w-1/2 flex-col">
-      <label className="text-xs text-slate-600">Sector</label>
-      <select
-        {...register('sector')}
-        className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-      >
-        {values?.docs.map((e) => (
-          <option key={e.id} value={e.id}>
-            {e.data().value}
-          </option>
-        ))}
-      </select>
-    </div>
+    <ControllerSelect
+      control={control}
+      isMulti={isMulti}
+      values={values}
+      label="Sector"
+      name="sector"
+    />
   );
 }

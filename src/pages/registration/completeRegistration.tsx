@@ -26,25 +26,27 @@ function CompleteRegistration() {
   const [preview, setPreview] = useState('');
   const [file, setFile] = useState<File>();
   const { user } = useUser();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<RegistrationFormValues>({
-    defaultValues: { userType: 'founder' },
-  });
+  const { register, handleSubmit, watch, control } =
+    useForm<RegistrationFormValues>({
+      defaultValues: { userType: 'founder' },
+    });
+
+  const watchUserType = watch('userType');
+
+  useEffect(() => {
+    console.log(watchUserType);
+  }, [watchUserType]);
 
   const createUser = async (data: RegistrationFormValues) => {
     let companyType;
-    if (data.userType === 'founder') {
+    if (data.userType) {
       companyType = 'startup';
     } else {
       companyType = 'fund';
     }
 
     const company = await addDoc(collection(getFirestore(app), 'companies'), {
-      name: data.companyName,
+      name: data.name,
       url: data.url,
       description: data.description,
       stage: data.stage,
@@ -81,7 +83,7 @@ function CompleteRegistration() {
       {
         firstName: data.firstName,
         lastName: data.lastName,
-        userType: data.userType,
+        userType: data.userType ? 'founder' : 'investor',
         companyId: company.id,
       }
     );
@@ -106,7 +108,7 @@ function CompleteRegistration() {
 
   return (
     <div className="flex h-screen justify-center bg-slate-50 p-4">
-      <div className="my-10 h-fit w-full min-w-fit max-w-md rounded bg-white p-10 shadow">
+      <div className="my-10 h-fit w-full min-w-fit max-w-xl rounded bg-white p-10 shadow">
         {/* <h1 className="ml-5 text-lg italic text-slate-700">star tub</h1> */}
         <div className="flex items-center">
           {/* <Image src="/logo.png" width="64" height="64" /> */}
@@ -116,21 +118,64 @@ function CompleteRegistration() {
         </div>
 
         <form
-          className="mt-4 flex flex-col text-slate-500"
+          className="flex w-full flex-col"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <div className="mt-2 flex justify-center gap-2">
+            <div className="flex w-full flex-col">
+              <label className="text-xs text-slate-600">First Name</label>
+              <input
+                type="text"
+                {...register('firstName')}
+                className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
+              />
+            </div>
+            <div className="flex w-full flex-col">
+              <label className="text-xs text-slate-600">Last Name</label>
+              <input
+                type="text"
+                {...register('lastName')}
+                className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <span className="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              Investor
+            </span>
+            <label
+              htmlFor="large-toggle"
+              className="relative inline-flex cursor-pointer items-center"
+            >
+              <input
+                type="checkbox"
+                value=""
+                id="large-toggle"
+                className="peer sr-only"
+                {...register('userType')}
+              />
+              <div className="peer h-7 w-14 rounded-full bg-slate-400 after:absolute after:top-0.5 after:left-[4px] after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800"></div>
+            </label>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              Founder
+            </span>
+          </div>
+
           <div className="mt-2 flex w-full justify-start gap-2">
             <div className="flex w-full flex-col">
               <label className="text-xs text-slate-600">Company Logo</label>
               {preview !== '' && (
                 <div className="mt-2">
                   <Image
+                    src={preview}
+                    placeholder={'blur'}
+                    blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
                     width={75}
                     height={75}
-                    objectFit="cover"
-                    src={preview}
-                    alt={'logo'}
+                    alt="logo"
                     className="rounded"
+                    quality={100}
                   />
                 </div>
               )}
@@ -144,109 +189,72 @@ function CompleteRegistration() {
                     setFile(e.target.files[0]);
                   }
                 }}
-              />
-            </div>
-          </div>
-          {/* register your input into the hook by invoking the "register" function */}
-          <div className="flex justify-center gap-2">
-            <div className="flex w-1/2 flex-col">
-              <label className="text-xs">First Name</label>
-              <input
-                type="text"
-                {...register('firstName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
-              />
-            </div>
-            <div className="flex w-1/2 flex-col">
-              <label className="text-xs">Last Name</label>
-              <input
-                type="text"
-                {...register('lastName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
+                accept="image/*"
               />
             </div>
           </div>
 
           <div className="mt-2 flex justify-center gap-2">
             <div className="flex w-full flex-col">
-              <label className="text-xs">Company Name</label>
+              <label className="text-xs text-slate-600">Company Name</label>
               <input
                 type="text"
-                {...register('companyName')}
-                className="w-full rounded border-1 border-slate-300 p-1 text-slate-700"
-              />
-            </div>
-
-            <div className="flex w-full flex-col">
-              <label className="text-xs">Type</label>
-              <select
-                {...register('userType')}
+                {...register('name')}
                 className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-              >
-                <option value={'founder'}>Founder</option>
-                <option value={'investor'}>Investor</option>
-              </select>
+              />
             </div>
           </div>
 
           <div className="mt-2 flex w-full flex-col">
-            <label className="text-xs">Website URL</label>
+            <label className="text-xs text-slate-600">Website URL</label>
             <input
               type={'url'}
-              {...register('url', { required: true })}
+              {...register('url')}
               className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
             />
           </div>
-          {/* errors will return when field validation fails  */}
-          {errors.url && <span>This field is required</span>}
 
-          {watch('userType') === 'founder' && (
-            <>
-              <div className="mt-2 flex w-full flex-col">
-                <label className="text-xs">Short description</label>
-                <textarea
-                  rows={4}
-                  {...register('description')}
-                  className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                />
-              </div>
-
-              <div className="mt-2 flex w-full flex-col">
-                <StageSelector register={register} />
-              </div>
-              {/* errors will return when field validation fails  */}
-              {/* {errors.stage && <span>This field is required</span>} */}
-
-              <div className="flex justify-center gap-4">
-                <SectorSelect register={register} />
-
-                <TechSelector register={register} />
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <DistModelSelector register={register} />
-
-                <StateSelect register={register} />
-              </div>
-
-              <div className="mt-2 flex w-full flex-col">
-                <label className="text-xs">Founder&apos;s LinkedIn</label>
-                <input
-                  type={'url'}
-                  {...register('linkedin', { required: true })}
-                  className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-                />
-              </div>
-            </>
-          )}
-
-          <div className="flex justify-start">
-            <input
-              className="my-4 w-20 cursor-pointer rounded bg-slate-500 p-1 py-2 text-sm font-semibold text-slate-50"
-              type="submit"
-              value="Finish!"
+          <div className="mt-2 flex w-full flex-col">
+            <label className="text-xs text-slate-600">Short description</label>
+            <textarea
+              rows={4}
+              {...register('description')}
+              className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
             />
           </div>
+
+          <div className="w-full">
+            <StageSelector control={control} isMulti />
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <SectorSelect control={control} isMulti />
+
+            <TechSelector control={control} isMulti />
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <DistModelSelector control={control} isMulti />
+
+            <StateSelect control={control} />
+          </div>
+
+          <div className="mt-2 flex w-full flex-col">
+            <label className="text-xs text-slate-600">
+              Founder&apos;s LinkedIn
+            </label>
+            <input
+              type={'url'}
+              {...register('linkedin')}
+              className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
+            />
+          </div>
+
+          <input
+            className="my-4 w-20 cursor-pointer rounded bg-slate-500 p-1 py-2 text-sm font-semibold text-white"
+            type="submit"
+            value={'Submit'}
+          />
         </form>
       </div>
     </div>

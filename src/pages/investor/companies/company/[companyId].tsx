@@ -16,9 +16,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { BiLeftArrowAlt } from 'react-icons/bi';
-import { BsPlusCircle } from 'react-icons/bs';
+import { BsLinkedin, BsPlusCircle } from 'react-icons/bs';
 import { GiProgression } from 'react-icons/gi';
-import { GrOverview, GrTechnology } from 'react-icons/gr';
+import { GoLinkExternal } from 'react-icons/go';
+import { GrLocation, GrOverview, GrTechnology } from 'react-icons/gr';
 import { TbBuildingStore } from 'react-icons/tb';
 
 import { NewQuestion } from '@/components/NewQuestion';
@@ -34,6 +35,9 @@ type CopmanyDictType = {
   state: string;
   stage: string;
   description: string;
+  email: string;
+  url: string;
+  linkedin: string;
   questions: QueryDocumentSnapshot<DocumentData>[];
 };
 
@@ -121,6 +125,9 @@ export default function Company() {
         stage: stagesDict[company.get('stage')] ?? 'N/A',
         description: company.get('description'),
         questions: questions.docs,
+        email: company.get('email'),
+        linkedin: company.get('linkedin'),
+        url: company.get('url'),
       };
       setCompanyDict(companyD);
     });
@@ -139,71 +146,122 @@ export default function Company() {
       {!loading && companyDict && (
         <>
           <div className="mb-8">
-            <div className="mb-4 flex items-center gap-4">
-              <div
-                className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
-                onClick={() => router.back()}
-              >
-                <BiLeftArrowAlt />
+            <div className="mb-4 flex items-center justify-between gap-4 pr-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
+                  onClick={() => router.back()}
+                >
+                  <BiLeftArrowAlt />
+                </div>
+                {companyDict.logoURL ? (
+                  <Image
+                    src={companyDict.logoURL}
+                    width={40}
+                    height={40}
+                    alt="logo"
+                    className="rounded"
+                    quality={100}
+                  />
+                ) : (
+                  <Image
+                    src={
+                      'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
+                    }
+                    width={40}
+                    height={40}
+                    alt="logo"
+                    className="rounded"
+                  />
+                )}
+                <div className="text-2xl font-bold text-slate-800">
+                  {companyDict.name}
+                </div>
               </div>
-              {companyDict.logoURL ? (
-                <Image
-                  src={companyDict.logoURL}
-                  width={40}
-                  height={40}
-                  alt="logo"
-                  className="rounded"
-                  quality={100}
-                />
-              ) : (
-                <Image
-                  src={'https://picsum.photos/40'}
-                  width={40}
-                  height={40}
-                  alt="logo"
-                  className="rounded"
-                />
-              )}
-              <div className="text-2xl font-bold text-slate-800">
-                {companyDict.name}
+              <div className="flex gap-2">
+                {companyDict.linkedin && (
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`//${companyDict.linkedin}`}
+                    className="flex cursor-pointer items-center gap-1 rounded border-1 border-slate-400 px-2 py-1 text-sm font-semibold text-slate-800 hover:border-1 hover:border-slate-400"
+                  >
+                    LinkedIn
+                    <BsLinkedin />
+                    {/* <GoLinkExternal /> */}
+                  </a>
+                )}
+                {companyDict.url && (
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={companyDict.url}
+                    className="flex cursor-pointer items-center gap-1 rounded border-1 border-slate-400 px-2 py-1 text-sm font-semibold text-slate-800 hover:border-1 hover:border-slate-400"
+                  >
+                    Visit Website
+                    <GoLinkExternal />
+                  </a>
+                )}
               </div>
             </div>
             <div className="mx-6 border-l-2 border-slate-400 px-2 text-sm italic">
               {companyDict.description}
             </div>
           </div>
-          <div className="px-16">
-            <div className="min-h-48 flex w-full flex-row justify-between p-4 text-slate-900">
+          <div className="lg:px-16">
+            <div className="min-h-48 flex w-full flex-row flex-wrap justify-between gap-2 p-4 text-slate-900">
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Estágio
                   <GiProgression />
                 </label>
-                <div className="text-lg font-medium">{companyDict.stage}</div>
+                <div className="font-medium">{companyDict.stage}</div>
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Modelo
                   <TbBuildingStore />
                 </label>
-                <div className="text-lg font-medium">{companyDict.model}</div>
+                <div className="font-medium">{companyDict.model}</div>
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Setor
                   <GrOverview />
                 </label>
-                <div className="text-lg font-medium">{companyDict.sector}</div>
+                <div className="font-medium">{companyDict.sector}</div>
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Tech
                   <GrTechnology />
                 </label>
-                <div className="text-lg font-medium">{companyDict.tech}</div>
+                <div className="font-medium">{companyDict.tech}</div>
+              </div>
+              <div className="flex flex-col">
+                <label className="text flex items-center gap-1 text-xs text-slate-500">
+                  Estado
+                  <GrLocation />
+                </label>
+                <div className="font-medium">{companyDict.state}</div>
               </div>
             </div>
-
+            {/* <div className="flex gap-2">
+              <a
+                className="border-none text-2xl text-slate-800"
+                href={`mailto:${companyDict.email}`}
+              >
+                <BiMailSend />
+              </a>
+              <a
+                className="border-none text-2xl text-slate-800"
+                href={`//${companyDict.linkedin}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BsLinkedin />
+              </a>
+            </div> */}
             {/* FAQ */}
             <div className="">
               <div className="mt-8">

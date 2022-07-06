@@ -5,8 +5,14 @@ import { Fragment, useEffect } from 'react';
 import { useUserInfo } from '@/context/UserInfoContext';
 
 export default withPageAuthRequired(function Index() {
-  const { userInfo, loading, firebaseError, auth0Error, signedIn } =
-    useUserInfo();
+  const {
+    userInfo,
+    loading,
+    firebaseError,
+    auth0Error,
+    signedIn,
+    companyInfo,
+  } = useUserInfo();
 
   useEffect(() => {
     // console.log(
@@ -18,7 +24,11 @@ export default withPageAuthRequired(function Index() {
     // );
     if (signedIn && !loading && !firebaseError && !auth0Error) {
       const getUser = async () => {
-        if (userInfo === undefined || !userInfo.exists()) {
+        if (
+          userInfo === undefined ||
+          !userInfo.exists() ||
+          !companyInfo.exists()
+        ) {
           router.push('/registration/completeRegistration');
         } else if (userInfo.data().userType === 'founder') {
           router.push('/founder/questions/');

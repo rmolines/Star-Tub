@@ -1,9 +1,10 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 import { AiOutlineForm } from 'react-icons/ai';
-import { BiArrowBack, BiFace, BiLogOut } from 'react-icons/bi';
-import { BsBriefcase } from 'react-icons/bs';
+import { BiArrowBack, BiLogOut } from 'react-icons/bi';
+import { BsBriefcase, BsPerson } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { TbBusinessplan } from 'react-icons/tb';
 
@@ -61,7 +62,7 @@ const investorMenuItems = [
 
 const DashboardLayout = (props: IMainProps) => {
   const router = useRouter();
-  const { userInfo } = useUserInfo();
+  const { companyInfo, logoURL } = useUserInfo();
 
   const [showSideBar, setShowSideBar] = useState(false);
 
@@ -86,24 +87,33 @@ const DashboardLayout = (props: IMainProps) => {
         >
           <nav className="sticky top-0 p-6">
             <ul className="">
-              <li className="mb-8 flex items-center gap-2 text-neutral-900">
-                <BiFace className="hidden h-12 w-12 rounded-full dark:bg-slate-500 md:flex" />
-                <div>
-                  {userInfo && userInfo?.data() && (
-                    <h2 className="font-semibold ">
-                      {`${userInfo?.data().firstName} ${
-                        userInfo?.data().lastName
-                      }`}
-                    </h2>
-                  )}
-                  <span className="flex items-center space-x-1">
-                    <Link href={'profile/'} className="border-0 no-underline">
-                      <div className="cursor-pointer border-0 text-xs text-slate-500 no-underline dark:text-slate-400">
-                        View profile
-                      </div>
-                    </Link>
-                  </span>
-                </div>
+              <li className="mb-8 flex">
+                <Link href={'fund/'}>
+                  <a className="flex items-center gap-2 border-none text-slate-800">
+                    {logoURL && (
+                      <Image
+                        src={
+                          logoURL ??
+                          'https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png'
+                        }
+                        placeholder={'blur'}
+                        blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
+                        width={40}
+                        height={40}
+                        alt="logo"
+                        className="rounded"
+                        quality={100}
+                      />
+                    )}
+                    <div>
+                      {companyInfo && companyInfo?.data() && (
+                        <h2 className="font-semibold">
+                          {`${companyInfo?.data().name}`}
+                        </h2>
+                      )}
+                    </div>
+                  </a>
+                </Link>
                 {showSideBar && (
                   <button
                     onClick={() => {
@@ -136,7 +146,19 @@ const DashboardLayout = (props: IMainProps) => {
                   </Link>
                 </li>
               ))}
-              <li className="border-t-1 border-neutral-200" key={'Logout'}>
+              <li className="border-t-1 border-neutral-200" key={'Profile'}>
+                <Link href={'profile/'}>
+                  <div className={`flex rounded ml-2 mt-4`}>
+                    <a className="flex cursor-pointer items-center space-x-4 border-none text-sm text-neutral-900">
+                      <span className="g-slate-400 text-2xl">
+                        <BsPerson />
+                      </span>
+                      <div>Profile</div>
+                    </a>
+                  </div>
+                </Link>
+              </li>
+              <li className="" key={'Logout'}>
                 <Link href={'/api/auth/logout/'}>
                   <div className={`flex rounded ml-2 mt-4`}>
                     <a

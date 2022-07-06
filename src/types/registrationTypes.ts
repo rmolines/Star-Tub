@@ -1,6 +1,6 @@
 export type RegistrationFormValues = {
   userType: string;
-  companyName: string;
+  name: string;
   firstName: string;
   lastName: string;
   url: string;

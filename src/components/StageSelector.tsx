@@ -2,32 +2,30 @@ import { collection, getFirestore, orderBy, query } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import React from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { UseFormRegister } from 'react-hook-form';
+import { Control } from 'react-hook-form';
+
+import { ControllerSelect } from './ControllerSelect';
 
 export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
 
 export function StageSelector({
-  register,
+  control,
+  isMulti = false,
 }: {
-  register: UseFormRegister<any>;
+  control: Control<any, object>;
+  isMulti?: boolean;
 }) {
   const [values] = useCollection(
-    query(collection(getFirestore(app), 'stages'), orderBy('value'))
+    query(collection(getFirestore(app), 'stages'), orderBy('order'))
   );
 
   return (
-    <div className="mt-2 flex w-full flex-col">
-      <label className="text-xs text-slate-600">Company stage</label>
-      <select
-        {...register('stage')}
-        className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
-      >
-        {values?.docs.map((e) => (
-          <option value={e.id} key={e.id}>
-            {e.data().value}
-          </option>
-        ))}
-      </select>
-    </div>
+    <ControllerSelect
+      control={control}
+      isMulti={isMulti}
+      values={values}
+      label="Stage"
+      name="stage"
+    />
   );
 }

@@ -15,7 +15,7 @@ export function ProfileForm() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { user } = useUser();
-  const { userInfo } = useUserInfo();
+  const { userInfo, loading } = useUserInfo();
   const [isOpen, setIsOpen] = useState(false);
   const deleteUserButtonRef = useDetectClickOutside({
     onTriggered: () => setIsOpen(false),
@@ -44,7 +44,7 @@ export function ProfileForm() {
   };
 
   useEffect(() => {
-    if (user?.email) {
+    if (user?.email && !loading && userInfo.data()) {
       reset({
         firstName: userInfo?.data().firstName,
         lastName: userInfo?.data().lastName,
