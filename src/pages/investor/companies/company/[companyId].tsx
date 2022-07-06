@@ -3,11 +3,12 @@ import {
   collection,
   doc,
   DocumentData,
+  DocumentSnapshot,
   getDoc,
   getDocs,
   getFirestore,
   query,
-  QueryDocumentSnapshot,
+  QuerySnapshot,
   where,
 } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
@@ -26,26 +27,15 @@ import { NewQuestion } from '@/components/NewQuestion';
 import { QuestionBox } from '@/components/QuestionBox';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
-type CopmanyDictType = {
-  name: string;
-  logoURL: string | undefined;
-  sector: string;
-  tech: string;
-  model: string;
-  state: string;
-  stage: string;
-  description: string;
-  email: string;
-  url: string;
-  linkedin: string;
-  questions: QueryDocumentSnapshot<DocumentData>[];
-};
-
 export default function Company() {
   const router = useRouter();
-  const [companyDict, setCompanyDict] = useState<CopmanyDictType | null>(null);
+  const [companyData, setCompanyData] =
+    useState<DocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(true);
   const [creatingQuestion, setCreatingQuestion] = useState(false);
+  const [questionsData, setQuestionsData] =
+    useState<QuerySnapshot<DocumentData> | null>(null);
+  const [logoURL, setLogoURL] = useState<string | undefined>('');
 
   const createQuestion = async (question: String) => {
     await addDoc(collection(getFirestore(app), 'questions'), {
@@ -57,14 +47,10 @@ export default function Company() {
   };
 
   const getCompanyInfo = async (companyId: string) => {
-    const sectors = await getDocs(collection(getFirestore(app), 'sectors'));
-    const tech = await getDocs(collection(getFirestore(app), 'tech'));
-    const models = await getDocs(collection(getFirestore(app), 'models'));
-    const stages = await getDocs(collection(getFirestore(app), 'stages'));
-    const states = await getDocs(collection(getFirestore(app), 'states'));
     const company = await getDoc(
       doc(getFirestore(app), 'companies', companyId)
     );
+    setCompanyData(company);
 
     const questions = await getDocs(
       query(
@@ -77,30 +63,7 @@ export default function Company() {
       )
     );
 
-    const sectorsDict: { [key: string]: string } = {};
-    sectors?.docs.forEach((e) => {
-      sectorsDict[e.id] = e.get('value');
-    });
-
-    const techDict: { [key: string]: string } = {};
-    tech?.docs.forEach((e) => {
-      techDict[e.id] = e.get('value');
-    });
-
-    const modelsDict: { [key: string]: string } = {};
-    models?.docs.forEach((e) => {
-      modelsDict[e.id] = e.get('value');
-    });
-
-    const stagesDict: { [key: string]: string } = {};
-    stages?.docs.forEach((e) => {
-      stagesDict[e.id] = e.get('value');
-    });
-
-    const statesDict: { [key: string]: string } = {};
-    states?.docs.forEach((e) => {
-      statesDict[e.id] = e.get('value');
-    });
+    setQuestionsData(questions);
 
     const getLogoURL = async () => {
       let tempURL: string | undefined;
@@ -114,23 +77,7 @@ export default function Company() {
       return tempURL;
     };
 
-    getLogoURL().then((URL) => {
-      const companyD: CopmanyDictType = {
-        name: company.get('name'),
-        logoURL: URL,
-        sector: sectorsDict[company.get('sector')] ?? 'N/A',
-        tech: techDict[company.get('tech')] ?? 'N/A',
-        model: modelsDict[company.get('model')] ?? 'N/A',
-        state: statesDict[company.get('state')] ?? 'N/A',
-        stage: stagesDict[company.get('stage')] ?? 'N/A',
-        description: company.get('description'),
-        questions: questions.docs,
-        email: company.get('email'),
-        linkedin: company.get('linkedin'),
-        url: company.get('url'),
-      };
-      setCompanyDict(companyD);
-    });
+    setLogoURL(await getLogoURL());
 
     setLoading(false);
   };
@@ -143,7 +90,7 @@ export default function Company() {
 
   return (
     <DashboardLayout type={LayoutType.investor}>
-      {!loading && companyDict && (
+      {!loading && companyData && (
         <>
           <div className="mb-8">
             <div className="mb-4 flex items-center justify-between gap-4 pr-4">
@@ -154,9 +101,9 @@ export default function Company() {
                 >
                   <BiLeftArrowAlt />
                 </div>
-                {companyDict.logoURL ? (
+                {logoURL ? (
                   <Image
-                    src={companyDict.logoURL}
+                    src={logoURL}
                     width={40}
                     height={40}
                     alt="logo"
@@ -175,15 +122,18 @@ export default function Company() {
                   />
                 )}
                 <div className="text-2xl font-bold text-slate-800">
-                  {companyDict.name}
+                  {companyData.get('name')}
                 </div>
               </div>
               <div className="flex gap-2">
-                {companyDict.linkedin && (
+                {companyData.get('linkedin') && (
                   <a
                     target="_blank"
                     rel="noreferrer"
-                    href={`//${companyDict.linkedin}`}
+                    href={`https://${companyData
+                      .get('linkedin')
+                      .split('://')
+                      .pop()}`}
                     className="flex cursor-pointer items-center gap-1 rounded border-1 border-slate-400 px-2 py-1 text-sm font-semibold text-slate-800 hover:border-1 hover:border-slate-400"
                   >
                     LinkedIn
@@ -191,11 +141,14 @@ export default function Company() {
                     {/* <GoLinkExternal /> */}
                   </a>
                 )}
-                {companyDict.url && (
+                {companyData.get('url') && (
                   <a
                     target="_blank"
                     rel="noreferrer"
-                    href={companyDict.url}
+                    href={`https://${companyData
+                      .get('url')
+                      .split('://')
+                      .pop()}`}
                     className="flex cursor-pointer items-center gap-1 rounded border-1 border-slate-400 px-2 py-1 text-sm font-semibold text-slate-800 hover:border-1 hover:border-slate-400"
                   >
                     Visit Website
@@ -205,7 +158,7 @@ export default function Company() {
               </div>
             </div>
             <div className="mx-6 border-l-2 border-slate-400 px-2 text-sm italic">
-              {companyDict.description}
+              {companyData.get('description')}
             </div>
           </div>
           <div className="lg:px-16">
@@ -215,53 +168,73 @@ export default function Company() {
                   Estágio
                   <GiProgression />
                 </label>
-                <div className="font-medium">{companyDict.stage}</div>
+                {companyData.get('stage').map((e: any) => (
+                  <div
+                    className="mb-1 rounded border-1 border-slate-300 px-1.5 text-slate-700"
+                    key={e.value}
+                  >
+                    {e.label}
+                  </div>
+                ))}
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Modelo
                   <TbBuildingStore />
                 </label>
-                <div className="font-medium">{companyDict.model}</div>
+                {companyData.get('model').map((e: any) => (
+                  <div
+                    className="mb-1 rounded border-1 border-slate-300 px-1.5 text-slate-700"
+                    key={e.value}
+                  >
+                    {e.label}
+                  </div>
+                ))}
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Setor
                   <GrOverview />
                 </label>
-                <div className="font-medium">{companyDict.sector}</div>
+                {companyData.get('sector').map((e: any) => (
+                  <div
+                    className="mb-1 rounded border-1 border-slate-300 px-1.5 text-slate-700"
+                    key={e.value}
+                  >
+                    {e.label}
+                  </div>
+                ))}
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Tech
                   <GrTechnology />
                 </label>
-                <div className="font-medium">{companyDict.tech}</div>
+                {companyData.get('tech').map((e: any) => (
+                  <div
+                    className="mb-1 rounded border-1 border-slate-300 px-1.5 text-slate-700"
+                    key={e.value}
+                  >
+                    {e.label}
+                  </div>
+                ))}
               </div>
               <div className="flex flex-col">
                 <label className="text flex items-center gap-1 text-xs text-slate-500">
                   Estado
                   <GrLocation />
                 </label>
-                <div className="font-medium">{companyDict.state}</div>
+                {companyData.get('state').map((e: any) => (
+                  <div
+                    className="mb-1 rounded border-1 border-slate-300 px-1.5 text-slate-700"
+                    key={e.value}
+                  >
+                    {e.label}
+                  </div>
+                ))}
               </div>
             </div>
-            {/* <div className="flex gap-2">
-              <a
-                className="border-none text-2xl text-slate-800"
-                href={`mailto:${companyDict.email}`}
-              >
-                <BiMailSend />
-              </a>
-              <a
-                className="border-none text-2xl text-slate-800"
-                href={`//${companyDict.linkedin}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BsLinkedin />
-              </a>
-            </div> */}
+
             {/* FAQ */}
             <div className="">
               <div className="mt-8">
@@ -292,15 +265,15 @@ export default function Company() {
                 )}
 
                 {/* Perguntas respondidas */}
-                {companyDict.questions.length > 0 && (
+                {!questionsData?.empty && (
                   <span>
-                    {companyDict.questions.map((docShadow, index) => (
+                    {questionsData?.docs.map((docShadow, index) => (
                       <QuestionBox
                         key={docShadow.id}
                         id={docShadow.id}
                         index={index}
-                        question={docShadow.data().question}
-                        answer={docShadow.data().answer}
+                        question={docShadow.get('question')}
+                        answer={docShadow.get('answer')}
                         unanswered={false}
                       />
                     ))}

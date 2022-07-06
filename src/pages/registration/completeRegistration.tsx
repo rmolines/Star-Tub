@@ -26,16 +26,9 @@ function CompleteRegistration() {
   const [preview, setPreview] = useState('');
   const [file, setFile] = useState<File>();
   const { user } = useUser();
-  const { register, handleSubmit, watch, control } =
-    useForm<RegistrationFormValues>({
-      defaultValues: { userType: 'founder' },
-    });
-
-  const watchUserType = watch('userType');
-
-  useEffect(() => {
-    console.log(watchUserType);
-  }, [watchUserType]);
+  const { register, handleSubmit, control } = useForm<RegistrationFormValues>({
+    defaultValues: { userType: 'founder' },
+  });
 
   const createUser = async (data: RegistrationFormValues) => {
     let companyType;

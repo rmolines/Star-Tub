@@ -14,11 +14,10 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
-const storage = getStorage();
-
 const env = process.env.NODE_ENV;
 
 if (env === 'development') {
+  const storage = getStorage();
   connectFirestoreEmulator(db, '0.0.0.0', 8080);
   connectStorageEmulator(storage, '0.0.0.0', 9199);
 }
