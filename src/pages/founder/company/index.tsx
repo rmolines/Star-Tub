@@ -28,6 +28,7 @@ export default withPageAuthRequired(function Company() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<CompanyFormValues>();
 
@@ -125,6 +126,8 @@ export default withPageAuthRequired(function Company() {
     };
   }, [file]);
 
+  // TODO consertar essa linha, nao precisa de ts ignore
+  // @ts-ignore
   const onSubmit = (data: CompanyFormValues) => updateUser(data);
 
   return (
@@ -195,18 +198,18 @@ export default withPageAuthRequired(function Company() {
               />
             </div>
 
-            <StageSelector register={register} />
+            <StageSelector control={control} isMulti={false} />
 
             <div className="flex justify-center gap-4">
-              <SectorSelect register={register} />
+              <SectorSelect control={control} isMulti={false} />
 
-              <TechSelector register={register} />
+              <TechSelector control={control} isMulti={false} />
             </div>
 
             <div className="flex justify-center gap-4">
-              <DistModelSelector register={register} />
+              <DistModelSelector control={control} isMulti={false} />
 
-              <StateSelect register={register} />
+              <StateSelect control={control} isMulti={false} />
             </div>
 
             <div className="mt-2 flex w-full flex-col">
