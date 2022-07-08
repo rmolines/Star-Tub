@@ -45,19 +45,6 @@ export const sectors = [
   'T.I.',
   'Telecom',
   'TravelTech',
-  'A.I.',
-  'Big Data / Analytics',
-  'Blockchain',
-  'Conectividade',
-  'Extended Reality (AR/VR/MR)',
-  'Gamefication',
-  'Hardware',
-  'Hardware',
-  'IoT',
-  'Marketplace',
-  'Plataforma',
-  'SaaS',
-  'Adtechs, Construtech e Proptech',
 ];
 
 export function SectorSelect({

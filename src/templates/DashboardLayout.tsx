@@ -83,7 +83,7 @@ const DashboardLayout = (props: IMainProps) => {
         <aside
           className={`${
             showSideBar ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform flex flex-col items-center duration-300 h-screen md:w-72 md:translate-x-0 z-10 fixed left-0 md:relative md:bg-white bg-neutral-200`}
+          } fixed left-0 z-10 flex h-screen flex-col items-center bg-neutral-200 transition-transform duration-300 md:sticky md:w-72 md:translate-x-0 md:bg-white`}
         >
           <nav className="sticky top-0 p-6">
             <ul className="">
@@ -151,7 +151,7 @@ const DashboardLayout = (props: IMainProps) => {
                 key={'Profile'}
               >
                 <Link href={'profile/'}>
-                  <div className={`flex rounded ml-2 mt-4`}>
+                  <div className={`ml-2 mt-4 flex rounded`}>
                     <a className="flex cursor-pointer items-center space-x-4 border-none text-sm text-neutral-900">
                       <span className="g-slate-400 text-2xl">
                         <BsPerson />
@@ -163,7 +163,7 @@ const DashboardLayout = (props: IMainProps) => {
               </li>
               <li className="pl-4" key={'Logout'}>
                 <Link href={'/api/auth/logout/'}>
-                  <div className={`flex rounded ml-2 mt-4`}>
+                  <div className={`ml-2 mt-4 flex rounded`}>
                     <a
                       onClick={() => {
                         setShowSideBar(false);
@@ -184,7 +184,7 @@ const DashboardLayout = (props: IMainProps) => {
         <main className="w-full antialiased">
           <div className="mx-auto h-screen">
             {/* Children */}
-            <div className="content">
+            <div className="">
               <div className="mb-4 flex items-center gap-2 px-4 pt-5">
                 <button
                   className="cursor-pointer"

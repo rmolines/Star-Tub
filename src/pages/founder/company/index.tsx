@@ -198,17 +198,22 @@ export default withPageAuthRequired(function Company() {
               />
             </div>
 
+            {/* @ts-ignore */}
             <StageSelector control={control} isMulti={false} />
 
             <div className="flex justify-center gap-4">
+              {/* @ts-ignore */}
               <SectorSelect control={control} isMulti={false} />
 
+              {/* @ts-ignore */}
               <TechSelector control={control} isMulti={false} />
             </div>
 
             <div className="flex justify-center gap-4">
+              {/* @ts-ignore */}
               <DistModelSelector control={control} isMulti={false} />
 
+              {/* @ts-ignore */}
               <StateSelect control={control} isMulti={false} />
             </div>
 

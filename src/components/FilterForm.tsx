@@ -38,10 +38,15 @@ export function FilterForm({
 
   return (
     <form className="mb-4 flex gap-4">
+      {/* @ts-ignore */}
       <StageSelector control={control} isMulti />
+      {/* @ts-ignore */}
       <StateSelect control={control} isMulti />
+      {/* @ts-ignore */}
       <TechSelector control={control} isMulti />
+      {/* @ts-ignore */}
       <DistModelSelector control={control} isMulti />
+      {/* @ts-ignore */}
       <SectorSelect control={control} isMulti />
     </form>
   );

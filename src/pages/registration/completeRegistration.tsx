@@ -217,18 +217,23 @@ function CompleteRegistration() {
           </div>
 
           <div className="w-full">
+            {/* @ts-ignore */}
             <StageSelector control={control} isMulti />
           </div>
 
           <div className="flex justify-center gap-4">
+            {/* @ts-ignore */}
             <SectorSelect control={control} isMulti />
 
+            {/* @ts-ignore */}
             <TechSelector control={control} isMulti />
           </div>
 
           <div className="flex justify-center gap-4">
+            {/* @ts-ignore */}
             <DistModelSelector control={control} isMulti />
 
+            {/* @ts-ignore */}
             <StateSelect control={control} />
           </div>
 

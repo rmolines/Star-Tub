@@ -1,6 +1,5 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
-import { connectStorageEmulator, getStorage } from 'firebase/storage';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyC9leLmboRDlay_PCgCW8DNrZJGIiHE8PQ',
@@ -14,12 +13,12 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
-const env = process.env.NODE_ENV;
+// const env = process.env.NODE_ENV;
 
-if (env === 'development') {
-  const storage = getStorage();
-  connectFirestoreEmulator(db, '0.0.0.0', 8080);
-  connectStorageEmulator(storage, '0.0.0.0', 9199);
-}
+// if (env === 'e') {
+//   const storage = getStorage();
+//   connectFirestoreEmulator(db, '0.0.0.0', 8081);
+//   connectStorageEmulator(storage, '0.0.0.0', 9199);
+// }
 
 export { app, db };
