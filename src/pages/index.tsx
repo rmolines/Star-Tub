@@ -5,18 +5,10 @@ import { Fragment, useEffect } from 'react';
 import { useUserInfo } from '@/context/UserInfoContext';
 
 export default withPageAuthRequired(function Index() {
-  const {
-    userInfo,
-    loading,
-    firebaseError,
-    auth0Error,
-    signedIn,
-    companyInfo,
-  } = useUserInfo();
+  const { userInfo, loading, auth0Error, companyInfo } = useUserInfo();
 
   useEffect(() => {
-    // TODO fix logic
-    if (signedIn && !loading && !firebaseError && !auth0Error) {
+    if (!loading && !auth0Error && userInfo && companyInfo) {
       const getUser = async () => {
         if (
           userInfo === undefined ||
@@ -32,7 +24,7 @@ export default withPageAuthRequired(function Index() {
       };
       getUser();
     }
-  }, [signedIn, loading, firebaseError, auth0Error]);
+  }, [loading, auth0Error, userInfo, companyInfo]);
 
   return <Fragment />;
 });
