@@ -5,31 +5,33 @@ const PdfViewer2 = ({ file }: { file: string }) => {
   const viewer = useRef(null);
 
   useEffect(() => {
-    if (viewer.current) {
-      WebViewer(
-        {
-          path: '/lib',
-          initialDoc: `/api/getPdf/${encodeURIComponent(file)}/`,
-          disabledElements: [
-            'viewControlsButton',
-            'viewControlsOverlay',
-            'toolsOverlay',
-            'ribbonsDropdown',
-            'selectToolButton',
-            'panToolButton',
-            'leftPanelButton',
-            'toggleNotesButton',
-            'toolsHeader',
-          ],
-        },
-        viewer.current
-      );
-      // .then((instance) => {
-      // const { docViewer } = instance;
-      // docViewer;
-      // you can now call WebViewer APIs here...
-      // });
-    }
+    import('@pdftron/webviewer').then(() => {
+      if (viewer.current) {
+        WebViewer(
+          {
+            path: '/lib',
+            initialDoc: `/api/getPdf/${encodeURIComponent(file)}/`,
+            disabledElements: [
+              'viewControlsButton',
+              'viewControlsOverlay',
+              'toolsOverlay',
+              'ribbonsDropdown',
+              'selectToolButton',
+              'panToolButton',
+              'leftPanelButton',
+              'toggleNotesButton',
+              'toolsHeader',
+            ],
+          },
+          viewer.current
+        );
+      }
+    });
+    // .then((instance) => {
+    // const { docViewer } = instance;
+    // docViewer;
+    // you can now call WebViewer APIs here...
+    // });
   }, []);
 
   return (
