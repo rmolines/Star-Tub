@@ -16,7 +16,7 @@ import { GiProgression } from 'react-icons/gi';
 import { GoLinkExternal } from 'react-icons/go';
 import { GrLocation, GrTechnology } from 'react-icons/gr';
 
-import PdfViewer2 from '@/components/PdfViewer';
+import PdfViewer from '@/components/PdfViewer';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 
 export default function Company() {
@@ -194,7 +194,7 @@ export default function Company() {
                 </div>
               </div>
             </div>
-            {deckURL && <PdfViewer2 file={deckURL} />}
+            {deckURL && <PdfViewer file={deckURL} />}
 
             {/* FAQ */}
             {/* <div className="">

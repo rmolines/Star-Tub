@@ -1,11 +1,14 @@
-import WebViewer from '@pdftron/webviewer';
+// import WebViewer from '@pdftron/webviewer';
 import { useEffect, useRef } from 'react';
 
-const PdfViewer2 = ({ file }: { file: string }) => {
+const PdfViewer = ({ file }: { file: string }) => {
   const viewer = useRef(null);
 
   useEffect(() => {
-    import('@pdftron/webviewer').then(() => {
+    // import('@pdftron/webviewer').then(() => {
+
+    const loadWebViewer = async () => {
+      const WebViewer = (await import('@pdftron/webviewer')).default;
       if (viewer.current) {
         WebViewer(
           {
@@ -26,7 +29,9 @@ const PdfViewer2 = ({ file }: { file: string }) => {
           viewer.current
         );
       }
-    });
+    };
+    loadWebViewer();
+    // });
     // .then((instance) => {
     // const { docViewer } = instance;
     // docViewer;
@@ -45,4 +50,4 @@ const PdfViewer2 = ({ file }: { file: string }) => {
   );
 };
 
-export default PdfViewer2;
+export default PdfViewer;
