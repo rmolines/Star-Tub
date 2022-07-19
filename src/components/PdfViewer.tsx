@@ -5,8 +5,6 @@ const PdfViewer = ({ file }: { file: string }) => {
   const viewer = useRef(null);
 
   useEffect(() => {
-    // import('@pdftron/webviewer').then(() => {
-
     const loadWebViewer = async () => {
       const WebViewer = (await import('@pdftron/webviewer')).default;
       if (viewer.current) {
@@ -31,12 +29,6 @@ const PdfViewer = ({ file }: { file: string }) => {
       }
     };
     loadWebViewer();
-    // });
-    // .then((instance) => {
-    // const { docViewer } = instance;
-    // docViewer;
-    // you can now call WebViewer APIs here...
-    // });
   }, []);
 
   return (
