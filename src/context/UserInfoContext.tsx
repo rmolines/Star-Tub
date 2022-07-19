@@ -45,7 +45,12 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     doc(getFirestore(app), `users/${user?.sub}`)
   );
   const [companyInfo, fbCompanyLoading, fbCompanyError] = useDocument(
-    doc(getFirestore(app), `companies/${userInfo?.get('companyId')}`)
+    doc(
+      getFirestore(app),
+      userInfo?.get('userType') === 'investor'
+        ? `funds/${userInfo?.get('companyId')}`
+        : `companies/${userInfo?.get('companyId')}`
+    )
   );
   const [signedIn, setSignedIn] = useState(false);
   const [logoURL, setLogoURL] = useState('');
@@ -60,9 +65,11 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     if (companyInfo && companyInfo.get('logoPath')) {
       const getLogoURL = async () => {
         const iconRef = ref(getStorage(), companyInfo.get('logoPath'));
-        getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
+        getDownloadURL(iconRef)
+          .then((URL) => setLogoURL(URL))
+          .catch((e) => console.log(e));
       };
-      getLogoURL();
+      getLogoURL().catch((e) => console.log(e));
     }
   }, [companyInfo]);
 

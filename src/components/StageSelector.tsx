@@ -8,12 +8,14 @@ import { ControllerSelect } from './ControllerSelect';
 
 export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
 
-export function StageSelector({
+export function StageSelector<Type>({
   control,
   isMulti = false,
+  disabled = false,
 }: {
-  control: Control<any, object>;
+  control: Control<Type, object>;
   isMulti?: boolean;
+  disabled?: boolean;
 }) {
   const [values] = useCollection(
     query(collection(getFirestore(app), 'stages'), orderBy('order'))
@@ -24,8 +26,9 @@ export function StageSelector({
       control={control}
       isMulti={isMulti}
       values={values}
-      label="Stage"
+      label="Estágio"
       name="stage"
+      disabled={disabled}
     />
   );
 }

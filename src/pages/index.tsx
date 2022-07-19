@@ -15,13 +15,7 @@ export default withPageAuthRequired(function Index() {
   } = useUserInfo();
 
   useEffect(() => {
-    // console.log(
-    //   userInfo?.data(),
-    //   userInfo?.exists(),
-    //   loading,
-    //   firebaseError,
-    //   auth0Error
-    // );
+    // TODO fix logic
     if (signedIn && !loading && !firebaseError && !auth0Error) {
       const getUser = async () => {
         if (
@@ -31,7 +25,7 @@ export default withPageAuthRequired(function Index() {
         ) {
           router.push('/registration/completeRegistration');
         } else if (userInfo.data().userType === 'founder') {
-          router.push('/founder/questions/');
+          router.push('/founder/funds/');
         } else {
           router.push('/investor/companies/');
         }

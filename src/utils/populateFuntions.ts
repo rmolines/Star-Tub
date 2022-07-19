@@ -2,6 +2,16 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { models } from '@/components/DistModelSelector';
+import { sectors } from '@/components/SectorSelect';
+import { stages } from '@/components/StageSelector';
+import { states } from '@/components/StateSelect';
+import { tech } from '@/components/ThesisSelector';
+import { getDocs, query, collection, getFirestore, where, addDoc } from 'firebase/firestore';
+import { app } from 'firebaseConfig';
+import { type } from 'os';
+import Papa from 'papaparse'
+
 export const populateCompanies = async (d: any) => {
   const description = d['Descrição Breve'];
   const linkedin = d['LinkedIn do Fundador(a) URL'];
@@ -79,7 +89,6 @@ export const populateFunds = async (d: any) => {
   const type = d.Tipo.split(',');
   const stages = d['Estágio de Investimento'].split(',');
   const sectors = d['Setores e Tecnologias de Interesse'].split(',');
-  const models = d['Modelos de Interesse'].split(',');
   const minInvestment = parseInt(
     d['Investimento Mínimo'].replace(/[^0-9]/g, '')
   );
@@ -91,11 +100,8 @@ export const populateFunds = async (d: any) => {
   );
 
   const stage = await getDocs(query(collection(getFirestore(app), 'stages')));
-  const model = await getDocs(query(collection(getFirestore(app), 'models')));
-  const sector = await getDocs(query(collection(getFirestore(app), 'sectors')));
-  const tech = await getDocs(query(collection(getFirestore(app), 'tech')));
-
   const typesList: { value: string; label: string }[] = [];
+  const thesisList: { value: string; label: string }[] = [];
 
   const getTypes = () => {
     const promises: Promise<unknown>[] = [];
@@ -131,7 +137,42 @@ export const populateFunds = async (d: any) => {
     return promises;
   };
 
+  const getThesis = () => {
+    const promises: Promise<unknown>[] = [];
+
+    sectors.forEach((element) => {
+      promises.push(
+        new Promise((resolve) => {
+          getDocs(
+            query(
+              collection(getFirestore(app), 'thesis'),
+              where('value', '==', element)
+            )
+          ).then((docs) => {
+            if (docs.empty) {
+              addDoc(collection(getFirestore(app), 'thesis'), {
+                value: element,
+              }).then((value) => {
+                thesisList.push({ value: value.id, label: element });
+                resolve('resolved');
+              });
+            } else {
+              thesisList.push({
+                value: docs.docs[0]?.id,
+                label: docs.docs[0]?.get('value'),
+              });
+              resolve('resolved');
+            }
+          });
+        })
+      );
+    });
+
+    return promises;
+  };
+
   await Promise.all(getTypes());
+  await Promise.all(getThesis());
 
   addDoc(collection(getFirestore(app), 'funds'), {
     name,
@@ -139,29 +180,9 @@ export const populateFunds = async (d: any) => {
     maxInvestment,
     avgInvestment,
     types: typesList,
+    thesis: thesisList,
     stage: stages.reduce((result, e) => {
       stage.docs.forEach((doc) => {
-        if (doc.get('value') === e)
-          result.push({ value: doc.id, label: doc.get('value') });
-      });
-      return result;
-    }, []),
-    tech: sectors.reduce((result, e) => {
-      tech.docs.forEach((doc) => {
-        if (doc.get('value') === e)
-          result.push({ value: doc.id, label: doc.get('value') });
-      });
-      return result;
-    }, []),
-    model: models.reduce((result, e) => {
-      model.docs.forEach((doc) => {
-        if (doc.get('value') === e)
-          result.push({ value: doc.id, label: doc.get('value') });
-      });
-      return result;
-    }, []),
-    sector: sectors.reduce((result, e) => {
-      sector.docs.forEach((doc) => {
         if (doc.get('value') === e)
           result.push({ value: doc.id, label: doc.get('value') });
       });
@@ -183,7 +204,7 @@ export const changePopulateHandler = async (event: any) => {
   // Passing file data (event.target.files[0]) to parse using Papa.parse
   const resolvePromises = async (results) => {
     for (const result of results.data) {
-      populateFunds(result);
+      await populateFunds(result);
     }
   };
 

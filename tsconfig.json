@@ -45,7 +45,9 @@
     "./out/**/*",
     "./node_modules/**/*",
     "cypress.config.ts",
-    "./cypress/**/*"
+    "./cypress/**/*",
+    "./public/**/*",
+    "./public/*"
   ],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

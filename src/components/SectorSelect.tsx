@@ -47,12 +47,14 @@ export const sectors = [
   'TravelTech',
 ];
 
-export function SectorSelect({
+export function SectorSelect<Type>({
   control,
   isMulti = false,
+  disabled = false,
 }: {
-  control: Control<any, object>;
+  control: Control<Type, object>;
   isMulti?: boolean;
+  disabled?: boolean;
 }) {
   const [values] = useCollection(
     query(collection(getFirestore(app), 'sectors'), orderBy('order'))
@@ -63,8 +65,10 @@ export function SectorSelect({
       control={control}
       isMulti={isMulti}
       values={values}
-      label="Sector"
+      label="Setor*"
+      // @ts-ignore
       name="sector"
+      disabled={disabled}
     />
   );
 }

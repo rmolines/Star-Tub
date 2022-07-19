@@ -36,11 +36,11 @@ export const states = [
   'Distrito Federal',
 ];
 
-function StateSelect({
+function StateSelect<Type>({
   control,
   isMulti = false,
 }: {
-  control: Control<any, object>;
+  control: Control<Type, object>;
   isMulti?: boolean;
 }) {
   const [values] = useCollection(
@@ -52,7 +52,7 @@ function StateSelect({
       control={control}
       isMulti={isMulti}
       values={values}
-      label="State"
+      label="Estado"
       name="state"
     />
   );

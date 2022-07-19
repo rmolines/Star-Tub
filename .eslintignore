@@ -5,3 +5,4 @@ ckeditor5
 cypress.config.ts
 cypress
 src/utils/populateFuntions.ts
+public

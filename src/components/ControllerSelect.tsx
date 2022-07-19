@@ -3,7 +3,7 @@ import React from 'react';
 import { Control, Controller, Path } from 'react-hook-form';
 import Select from 'react-select/';
 
-import { CompanyFormValues } from '@/types/companyTypes';
+import { StartupFormValues } from '@/types/companyTypes';
 
 export function ControllerSelect({
   control,
@@ -11,12 +11,14 @@ export function ControllerSelect({
   values,
   label,
   name,
+  disabled = false,
 }: {
   control: Control<any, object>;
   isMulti: boolean;
   values: QuerySnapshot<DocumentData> | undefined;
   label: string;
-  name: Path<CompanyFormValues>;
+  name: Path<StartupFormValues>;
+  disabled?: boolean;
 }) {
   return (
     <Controller
@@ -30,6 +32,7 @@ export function ControllerSelect({
             {...field}
             placeholder="Todos"
             isMulti={isMulti}
+            isDisabled={disabled}
             isSearchable={false}
             className="text-sm text-slate-700 selection:border-none"
             options={values?.docs.map((e) => ({

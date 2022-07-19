@@ -1,14 +1,25 @@
-export type CompanyFormValues = {
+export type StartupFormValues = {
   name: string;
   url: string;
   description: string;
-  stage: { value: string; label: string }[];
-  sector: string;
-  tech: string;
-  model: string;
-  state: string;
+  stage: { value: string; label: string };
+  state: { value: string; label: string };
+  thesis: { value: string; label: string }[];
   linkedin: string;
   logo: FileList;
+  deck: FileList;
+};
+
+export type FundFormValues = {
+  name: string;
+  description: string;
+  stage: { value: string; label: string }[];
+  thesis: { value: string; label: string }[];
+  state: { value: string; label: string };
+  types: { value: string; label: string }[];
+  logo: FileList;
+  minInvestment: string;
+  maxInvestment: string;
 };
 
 export type CompanyDictType = {
@@ -32,15 +43,7 @@ export type FilterFormValues = {
     value: string;
     label: string;
   };
-  tech: {
-    value: string;
-    label: string;
-  };
-  model: {
-    value: string;
-    label: string;
-  };
-  sector: {
+  thesis: {
     value: string;
     label: string;
   };

@@ -1,5 +1,6 @@
 const tailwindTypography = require('@tailwindcss/typography');
 const tailwindForms = require('@tailwindcss/forms');
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   darkMode: 'class',
@@ -34,6 +35,11 @@ module.exports = {
             fontSize: '15px',
           },
         },
+      },
+      fontFamily: {
+        sora: ['Sora', ...defaultTheme.fontFamily.sans],
+        russo: ['Russo One', ...defaultTheme.fontFamily.sans],
+        inter: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       gridTemplateColumns: {
         'auto-fit': 'repeat(auto-fit, minmax(0, 1fr))',
