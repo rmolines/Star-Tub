@@ -38,8 +38,8 @@ export function ProfileForm() {
 
   const deleteUser = async (sub: string | undefined | null) => {
     if (sub) {
+      await deleteDoc(doc(getFirestore(app), `users/${sub}`));
       router.push('/api/auth/logout/');
-      deleteDoc(doc(getFirestore(app), `users/${sub}`));
     }
   };
 

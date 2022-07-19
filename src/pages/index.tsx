@@ -9,6 +9,7 @@ export default withPageAuthRequired(function Index() {
 
   useEffect(() => {
     if (!loading && !auth0Error && userInfo && companyInfo) {
+      console.log(userInfo.exists(), companyInfo.exists());
       const getUser = async () => {
         if (
           userInfo === undefined ||

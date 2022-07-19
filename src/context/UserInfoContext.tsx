@@ -39,9 +39,10 @@ export function useUserInfo() {
 }
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
-  const { user, error: auth0Error, isLoading: auth0Loading } = useUser();
+  const { user, error: auth0Error } = useUser();
 
   const [logoURL, setLogoURL] = useState('');
+  const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] =
     useState<DocumentSnapshot<DocumentData> | null>(null);
   const [companyInfo, setCompanyInfo] =
@@ -59,6 +60,7 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     );
     setUserInfo(tempUser);
     setCompanyInfo(tempCompany);
+    setLoading(false);
 
     const iconRef = ref(getStorage(), tempCompany.get('logoPath'));
     if (iconRef.name) {
@@ -79,7 +81,7 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
         userInfo,
         companyInfo,
         logoURL,
-        loading: auth0Loading,
+        loading,
         auth0Error,
       }}
     >
