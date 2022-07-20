@@ -1,4 +1,5 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { StartupForm } from '@/components/StartupForm';
@@ -10,10 +11,14 @@ import { StartupFormValues } from '../../../types/companyTypes';
 export default withPageAuthRequired(function Company() {
   const [success, setSuccess] = useState(false);
   const { user } = useUser();
+  const router = useRouter();
 
   const onSubmit = (data: StartupFormValues) => {
     if (user?.sub) {
-      registerFounder(data, user?.sub).then(() => setSuccess(true));
+      registerFounder(data, user?.sub).then(() => {
+        setSuccess(true);
+        router.reload();
+      });
     }
   };
 

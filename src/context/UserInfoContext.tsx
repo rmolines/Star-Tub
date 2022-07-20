@@ -50,6 +50,7 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
 
   const getInfo = async (userSub: string) => {
     const tempUser = await getDoc(doc(getFirestore(app), 'users', userSub));
+
     const tempCompany = await getDoc(
       doc(
         getFirestore(app),
@@ -74,6 +75,30 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
       getInfo(user.sub);
     }
   }, [user]);
+
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     console.log(
+  //       userInfo.get('userType') === 'investor'
+  //         ? `funds/${userInfo.get('companyId')}`
+  //         : `companies/${userInfo.get('companyId')}`
+  //     );
+  //     const unsub = onSnapshot(
+  //       doc(
+  //         getFirestore(app),
+  //         userInfo.get('userType') === 'investor'
+  //           ? `funds/${userInfo.get('companyId')}`
+  //           : `companies/${userInfo.get('companyId')}`
+  //       ),
+  //       (docShadow) => {
+  //         setCompanyInfo(docShadow);
+  //       }
+  //     );
+
+  //     return unsub();
+  //   }
+  //   return () => {};
+  // }, [userInfo]);
 
   return (
     <UserInfoContext.Provider
