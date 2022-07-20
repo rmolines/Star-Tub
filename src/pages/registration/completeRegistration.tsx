@@ -15,7 +15,9 @@ function CompleteRegistration() {
 
   const onSubmit = (data: FundFormValues) => {
     if (user?.sub) {
-      registerInvestor(data, user?.sub).then(() => router.push('/'));
+      registerInvestor(data, user?.sub).then(() =>
+        router.push('/founder/funds/')
+      );
     }
   };
 
@@ -56,7 +58,9 @@ function CompleteRegistration() {
           <StartupForm
             onSubmit={(data: StartupFormValues) => {
               if (user?.sub) {
-                registerFounder(data, user?.sub).then(() => router.push('/'));
+                registerFounder(data, user?.sub).then(() =>
+                  router.push('/investor/companies/')
+                );
               }
             }}
             fillInfo={false}
