@@ -1,30 +1,41 @@
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import router from 'next/router';
-import { Fragment, useEffect } from 'react';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { app } from 'firebaseConfig';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
-import { useUserInfo } from '@/context/UserInfoContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default withPageAuthRequired(function Index() {
-  const { userInfo, loading, auth0Error, companyInfo } = useUserInfo();
+  const { user } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !auth0Error && userInfo && companyInfo) {
-      const getUser = async () => {
-        if (
-          userInfo === undefined ||
-          !userInfo.exists() ||
-          !companyInfo.exists()
-        ) {
-          router.push('/registration/completeRegistration');
-        } else if (userInfo.data().userType === 'founder') {
-          router.push('/founder/funds/');
-        } else {
-          router.push('/investor/companies/');
-        }
-      };
-      getUser();
-    }
-  }, [loading, auth0Error, userInfo, companyInfo]);
+    const getInfo = async () => {
+      if (user && user.sub) {
+        const userInfo = await getDoc(
+          doc(getFirestore(app), 'users', user.sub)
+        );
 
-  return <Fragment />;
+        const companyInfo = await getDoc(
+          doc(
+            getFirestore(app),
+            userInfo.get('userType') === 'investor' ? 'funds' : 'companies',
+            userInfo.get('companyId')
+          )
+        );
+
+        if (userInfo.exists() && companyInfo.exists()) {
+          if (userInfo.get('userType') === 'investor') {
+            router.push('/investor/companies/');
+          } else {
+            router.push('/founder/funds/');
+          }
+        }
+      }
+    };
+    getInfo();
+  }, [user]);
+
+  return <LoadingSpinner isOpen />;
 });

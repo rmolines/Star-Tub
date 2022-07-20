@@ -1,5 +1,4 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { FundForm } from '@/components/FundForm';
@@ -10,13 +9,11 @@ import { registerInvestor } from '@/utils/functions';
 export default withPageAuthRequired(function Company() {
   const { user } = useUser();
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
 
   const onSubmit = (data: FundFormValues) => {
     if (user?.sub) {
       registerInvestor(data, user?.sub).then(() => {
         setSuccess(true);
-        router.reload();
       });
     }
   };

@@ -61,7 +61,7 @@ export function ProfileForm() {
         <>
           <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
             {/* register your input into the hook by invoking the "register" function */}
-            <div className="flex justify-center gap-2">
+            {/* <div className="flex justify-center gap-2">
               <div className="flex w-1/2 flex-col">
                 <label className="text-sm">First Name</label>
                 <input
@@ -78,7 +78,7 @@ export function ProfileForm() {
                   className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
                 />
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-2 flex w-full flex-col">
               <label className="text-sm">E-mail</label>
