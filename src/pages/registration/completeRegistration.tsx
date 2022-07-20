@@ -16,7 +16,7 @@ function CompleteRegistration() {
   const onSubmit = (data: FundFormValues) => {
     if (user?.sub) {
       registerInvestor(data, user?.sub).then(() =>
-        router.push('/founder/funds/')
+        router.push('/investor/companies/')
       );
     }
   };
@@ -59,7 +59,7 @@ function CompleteRegistration() {
             onSubmit={(data: StartupFormValues) => {
               if (user?.sub) {
                 registerFounder(data, user?.sub).then(() =>
-                  router.push('/investor/companies/')
+                  router.push('/founder/funds/')
                 );
               }
             }}
