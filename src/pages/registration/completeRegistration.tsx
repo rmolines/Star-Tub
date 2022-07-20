@@ -10,7 +10,7 @@ import { registerFounder, registerInvestor } from '@/utils/functions';
 import { StartupForm } from '../../components/StartupForm';
 
 function CompleteRegistration() {
-  const [userType, setUserType] = useState(false);
+  const [userType] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
   const router = useRouter();
@@ -31,11 +31,11 @@ function CompleteRegistration() {
         <div className="flex items-center">
           {/* <Image src="/logo.png" width="64" height="64" /> */}
           <h1 className=" text-xl font-semibold text-slate-700">
-            Complete Registration
+            Finalize o cadastro de sua startup!
           </h1>
         </div>
 
-        <div className="mt-6 flex justify-center">
+        {/* <div className="mt-6 flex justify-center">
           <span className="mr-3 text-sm font-medium text-gray-900 dark:text-gray-300">
             Investor
           </span>
@@ -55,7 +55,7 @@ function CompleteRegistration() {
           <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
             Founder
           </span>
-        </div>
+        </div> */}
 
         {userType ? (
           <StartupForm
