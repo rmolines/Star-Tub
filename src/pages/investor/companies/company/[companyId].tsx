@@ -1,3 +1,4 @@
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   doc,
   DocumentData,
@@ -19,7 +20,7 @@ import PdfViewer from '@/components/PdfViewer';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { getFileURL } from '@/utils/functions';
 
-export default function Company() {
+export default withPageAuthRequired(function Company() {
   const router = useRouter();
   const [companyData, setCompanyData] =
     useState<DocumentSnapshot<DocumentData> | null>(null);
@@ -235,4 +236,4 @@ export default function Company() {
       )}
     </DashboardLayout>
   );
-}
+});

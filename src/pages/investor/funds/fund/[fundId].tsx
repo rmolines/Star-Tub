@@ -1,3 +1,4 @@
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -12,7 +13,7 @@ import { TbBuildingStore } from 'react-icons/tb';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { getFundInfo } from '@/utils/functions';
 
-export default function Company() {
+export default withPageAuthRequired(function Company() {
   const router = useRouter();
   const [fundData, setFundData] =
     useState<DocumentSnapshot<DocumentData> | null>(null);
@@ -165,4 +166,4 @@ export default function Company() {
       )}
     </DashboardLayout>
   );
-}
+});

@@ -8,10 +8,12 @@ import { ControllerSelect } from './ControllerSelect';
 export function ThesisSelector<Type>({
   control,
   isMulti = false,
+  isFund = false,
   disabled = false,
 }: {
   control: Control<Type, object>;
   isMulti?: boolean;
+  isFund?: boolean;
   disabled?: boolean;
 }) {
   const [values] = useCollection(
@@ -22,6 +24,7 @@ export function ThesisSelector<Type>({
     <ControllerSelect
       control={control}
       isMulti={isMulti}
+      isFund={isFund}
       values={values}
       label="Teses de Interesse"
       name="thesis"

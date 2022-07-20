@@ -15,11 +15,21 @@ export function ControllerSelect({
 }: {
   control: Control<any, object>;
   isMulti: boolean;
+  isFund?: boolean;
   values: QuerySnapshot<DocumentData> | undefined;
   label: string;
   name: Path<StartupFormValues>;
   disabled?: boolean;
 }) {
+  const valuesList = values?.docs.map((e) => ({
+    value: e.id,
+    label: e.get('value'),
+  }));
+
+  // if (isFund && valuesList) {
+  //   valuesList = [{ value: 'Todos', label: 'Todos' }].concat(valuesList);
+  // }
+
   return (
     <Controller
       control={control}
@@ -36,10 +46,7 @@ export function ControllerSelect({
             isDisabled={disabled}
             isSearchable={false}
             className="text-sm text-slate-700 selection:border-none"
-            options={values?.docs.map((e) => ({
-              value: e.id,
-              label: e.get('value'),
-            }))}
+            options={valuesList}
           />
         </div>
       )}

@@ -135,7 +135,7 @@ export function FundForm({
 
       <div className="flex w-full flex-col gap-4 sm:flex-row">
         <div className="w-full">
-          <ThesisSelector control={control} isMulti />
+          <ThesisSelector control={control} isMulti isFund />
           {errors.thesis && <RequiredMsg />}
         </div>
         <div className="w-full">
