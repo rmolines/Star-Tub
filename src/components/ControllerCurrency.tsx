@@ -16,6 +16,7 @@ export function ControllerCurrency<Type>({
     <Controller
       control={control}
       name={name}
+      rules={{ required: true }}
       render={({ field }) => (
         <div className="flex w-full flex-col">
           <label className="text-xs text-slate-600">{label}</label>

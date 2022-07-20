@@ -23,7 +23,7 @@ export function ThesisSelector<Type>({
       control={control}
       isMulti={isMulti}
       values={values}
-      label="Teses de Interesse*"
+      label="Teses de Interesse"
       name="thesis"
       disabled={disabled}
     />

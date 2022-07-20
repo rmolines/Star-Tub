@@ -10,6 +10,7 @@ import { StartupFormValues } from '@/types/companyTypes';
 import { getFileURL } from '@/utils/functions';
 
 import PdfViewer from './PdfViewer';
+import RequiredMsg from './RequiredMsg';
 import { StageSelector } from './StageSelector';
 import StateSelect from './StateSelect';
 import { ThesisSelector } from './ThesisSelector';
@@ -26,8 +27,13 @@ export function StartupForm({
   const [deckURL, setDeckURL] = useState<string | undefined>('');
   const [file, setFile] = useState<File>();
 
-  const { register, handleSubmit, control, reset } =
-    useForm<StartupFormValues>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<StartupFormValues>();
 
   const fillCompanyInfo = async () => {
     const companyInfo = await getDoc(
@@ -107,16 +113,20 @@ export function StartupForm({
         </div>
       </div>
 
-      <div className="mt-2 flex justify-center gap-2">
+      <div className="mt-2 flex justify-center gap-x-4">
         <div className="flex w-full flex-col">
-          <label className="text-xs text-slate-600">Nome da Startup*</label>
+          <label className="text-xs text-slate-600">Nome da Startup</label>
           <input
             type="text"
-            {...register('name')}
+            {...register('name', { required: true })}
             className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
           />
+          {errors.name && <RequiredMsg />}
         </div>
-        <StateSelect control={control} />
+        <div className="w-full">
+          <StateSelect control={control} />
+          {errors.state && <RequiredMsg />}
+        </div>
       </div>
 
       <div className="flex flex-col gap-x-4 md:flex-row">
@@ -140,8 +150,14 @@ export function StartupForm({
       </div>
 
       <div className="mt-2 flex w-full flex-col gap-4 md:flex-row">
-        <StageSelector control={control} />
-        <ThesisSelector control={control} isMulti />
+        <div className="w-full">
+          <StageSelector control={control} />
+          {errors.stage && <RequiredMsg />}
+        </div>
+        <div className="w-full">
+          <ThesisSelector control={control} isMulti />
+          {errors.thesis && <RequiredMsg />}
+        </div>
       </div>
 
       <div className="mt-2 flex w-full flex-col">
@@ -166,9 +182,11 @@ export function StartupForm({
         // }}
         accept="application/pdf"
       />
-      <div className="h-[40rem] py-8">
-        {deckURL && <PdfViewer file={deckURL} />}
-      </div>
+      {deckURL && (
+        <div className="h-[40rem] py-8">
+          <PdfViewer file={deckURL} />
+        </div>
+      )}
       <input
         className="my-4 w-20 cursor-pointer rounded bg-slate-500 p-1 py-2 text-sm font-semibold text-white"
         type="submit"

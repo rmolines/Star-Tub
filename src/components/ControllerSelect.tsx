@@ -23,6 +23,7 @@ export function ControllerSelect({
   return (
     <Controller
       control={control}
+      rules={{ required: true }}
       name={name}
       render={({ field }) => (
         <div className="flex w-full flex-col">
@@ -30,7 +31,7 @@ export function ControllerSelect({
           <Select
             defaultValue={field.value}
             {...field}
-            placeholder="Todos"
+            placeholder="Selecionar..."
             isMulti={isMulti}
             isDisabled={disabled}
             isSearchable={false}

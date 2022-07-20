@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 import { FundForm } from '@/components/FundForm';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { FundFormValues, StartupFormValues } from '@/types/companyTypes';
 import { registerFounder, registerInvestor } from '@/utils/functions';
 
@@ -10,11 +11,13 @@ import { StartupForm } from '../../components/StartupForm';
 
 function CompleteRegistration() {
   const [userType, setUserType] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
   const router = useRouter();
 
   const onSubmit = (data: FundFormValues) => {
     if (user?.sub) {
+      setIsOpen(true);
       registerInvestor(data, user?.sub).then(() =>
         router.push('/investor/companies/')
       );
@@ -23,7 +26,7 @@ function CompleteRegistration() {
 
   return (
     <div className="flex h-screen justify-center bg-slate-50 p-4">
-      <div className="my-10 h-fit w-full min-w-fit max-w-xl rounded bg-white p-10 shadow">
+      <div className="my-10 h-fit w-fit max-w-2xl rounded bg-white p-10 shadow">
         {/* <h1 className="ml-5 text-lg italic text-slate-700">star tub</h1> */}
         <div className="flex items-center">
           {/* <Image src="/logo.png" width="64" height="64" /> */}
@@ -58,6 +61,7 @@ function CompleteRegistration() {
           <StartupForm
             onSubmit={(data: StartupFormValues) => {
               if (user?.sub) {
+                setIsOpen(true);
                 registerFounder(data, user?.sub).then(() =>
                   router.push('/founder/funds/')
                 );
@@ -69,6 +73,7 @@ function CompleteRegistration() {
           <FundForm onSubmit={onSubmit} />
         )}
       </div>
+      <LoadingSpinner isOpen={isOpen} />
     </div>
   );
 }

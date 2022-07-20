@@ -141,8 +141,8 @@ export const registerFounder = async (data: StartupFormValues, sub: string) => {
 
   const companyData = {
     name: data.name,
-    url: data.url,
-    linkedin: data.linkedin,
+    ...(data.linkedin && { linkedin: data.linkedin }),
+    ...(data.url && { url: data.url }),
     description: data.description,
     stage: data.stage,
     state: data.state,

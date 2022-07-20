@@ -1,5 +1,11 @@
 import { useUser } from '@auth0/nextjs-auth0';
-import { deleteDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  getFirestore,
+  updateDoc,
+} from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -38,6 +44,18 @@ export function ProfileForm() {
 
   const deleteUser = async (sub: string | undefined | null) => {
     if (sub) {
+      const userInfoShadow = await getDoc(
+        doc(getFirestore(app), `users/${sub}`)
+      );
+      if (userInfoShadow.get('userType') === 'founder') {
+        await deleteDoc(
+          doc(getFirestore(app), `companies/${userInfoShadow.get('companyId')}`)
+        );
+      } else {
+        await deleteDoc(
+          doc(getFirestore(app), `funds/${userInfoShadow.get('companyId')}`)
+        );
+      }
       await deleteDoc(doc(getFirestore(app), `users/${sub}`));
       router.push('/api/auth/logout/');
     }

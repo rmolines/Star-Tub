@@ -2,6 +2,7 @@ import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useState } from 'react';
 
 import { FundForm } from '@/components/FundForm';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { FundFormValues } from '@/types/companyTypes';
 import { registerInvestor } from '@/utils/functions';
@@ -9,11 +10,14 @@ import { registerInvestor } from '@/utils/functions';
 export default withPageAuthRequired(function Company() {
   const { user } = useUser();
   const [success, setSuccess] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const onSubmit = (data: FundFormValues) => {
     if (user?.sub) {
+      setIsOpen(true);
       registerInvestor(data, user?.sub).then(() => {
         setSuccess(true);
+        setIsOpen(false);
       });
     }
   };
@@ -30,6 +34,7 @@ export default withPageAuthRequired(function Company() {
           )}
         </div>
       )}
+      <LoadingSpinner isOpen={isOpen} />
     </DashboardLayout>
   );
 });

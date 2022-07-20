@@ -10,6 +10,7 @@ import { FundFormValues } from '@/types/companyTypes';
 
 import { ControllerCurrency } from './ControllerCurrency';
 import { FundTypeSelector } from './FundTypeSelector';
+import RequiredMsg from './RequiredMsg';
 import { StageSelector } from './StageSelector';
 import StateSelect from './StateSelect';
 import { ThesisSelector } from './ThesisSelector';
@@ -25,7 +26,13 @@ export function FundForm({
   const [file, setFile] = useState<File>();
   const { userInfo, loading } = useUserInfo();
 
-  const { register, handleSubmit, control, reset } = useForm<FundFormValues>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FundFormValues>();
 
   const fillCompanyInfo = async () => {
     const fundInfo = await getDoc(
@@ -75,7 +82,7 @@ export function FundForm({
 
       <div className="mt-2 flex w-full justify-start gap-2">
         <div className="flex w-full flex-col">
-          <label className="text-xs text-slate-600">Company Logo</label>
+          <label className="text-xs text-slate-600">Logo do Fundo</label>
           {preview && (
             <div className="mt-2 rounded">
               <Image
@@ -105,36 +112,55 @@ export function FundForm({
 
       <div className="mt-2 flex justify-center gap-2">
         <div className="flex w-full flex-col">
-          <label className="text-xs text-slate-600">Fund Name</label>
+          <label className="text-xs text-slate-600">Nome do Fundo</label>
           <input
             type="text"
-            {...register('name')}
+            {...register('name', { required: true })}
             className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
           />
+          {errors.name && <RequiredMsg />}
         </div>
       </div>
 
       <div className="flex w-full flex-col gap-4 sm:flex-row">
-        <FundTypeSelector control={control} isMulti />
-        <StageSelector control={control} isMulti />
-      </div>
-
-      <div className="flex flex-col justify-center gap-4 sm:flex-row">
-        <ThesisSelector control={control} isMulti />
-        <StateSelect control={control} />
+        <div className="w-full">
+          <FundTypeSelector control={control} isMulti />
+          {errors.types && <RequiredMsg />}
+        </div>
+        <div className="w-full">
+          <StageSelector control={control} isMulti />
+          {errors.stage && <RequiredMsg />}
+        </div>
       </div>
 
       <div className="flex w-full flex-col gap-4 sm:flex-row">
-        <ControllerCurrency
-          control={control}
-          label={'Investimento Mínimo'}
-          name={'minInvestment'}
-        />
-        <ControllerCurrency
-          control={control}
-          label={'Investimento Máximo'}
-          name={'maxInvestment'}
-        />
+        <div className="w-full">
+          <ThesisSelector control={control} isMulti />
+          {errors.thesis && <RequiredMsg />}
+        </div>
+        <div className="w-full">
+          <StateSelect control={control} />
+          {errors.state && <RequiredMsg />}
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col gap-4 sm:flex-row">
+        <div className="w-full">
+          <ControllerCurrency
+            control={control}
+            label={'Investimento Mínimo'}
+            name={'minInvestment'}
+          />
+          {errors.minInvestment && <RequiredMsg />}
+        </div>
+        <div className="w-full">
+          <ControllerCurrency
+            control={control}
+            label={'Investimento Máximo'}
+            name={'maxInvestment'}
+          />
+          {errors.maxInvestment && <RequiredMsg />}
+        </div>
       </div>
 
       <div className="mt-2 flex w-full flex-col">

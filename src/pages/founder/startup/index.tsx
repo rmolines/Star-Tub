@@ -1,6 +1,7 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useState } from 'react';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { StartupForm } from '@/components/StartupForm';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { registerFounder } from '@/utils/functions';
@@ -8,13 +9,16 @@ import { registerFounder } from '@/utils/functions';
 import { StartupFormValues } from '../../../types/companyTypes';
 
 export default withPageAuthRequired(function Company() {
+  const [isOpen, setIsOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const { user } = useUser();
 
   const onSubmit = (data: StartupFormValues) => {
     if (user?.sub) {
+      setIsOpen(true);
       registerFounder(data, user?.sub).then(() => {
         setSuccess(true);
+        setIsOpen(false);
       });
     }
   };
@@ -31,6 +35,7 @@ export default withPageAuthRequired(function Company() {
           )}
         </div>
       )}
+      <LoadingSpinner isOpen={isOpen} />
     </DashboardLayout>
   );
 });
