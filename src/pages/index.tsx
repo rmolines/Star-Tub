@@ -17,6 +17,11 @@ export default withPageAuthRequired(function Index() {
           doc(getFirestore(app), 'users', user.sub)
         );
 
+        if (!userInfo.exists()) {
+          router.push('/registration/completeRegistration/');
+          return;
+        }
+
         const companyInfo = await getDoc(
           doc(
             getFirestore(app),
@@ -25,12 +30,15 @@ export default withPageAuthRequired(function Index() {
           )
         );
 
-        if (userInfo.exists() && companyInfo.exists()) {
-          if (userInfo.get('userType') === 'investor') {
-            router.push('/investor/companies/');
-          } else {
-            router.push('/founder/funds/');
-          }
+        if (!companyInfo.exists()) {
+          router.push('/registration/completeRegistration/');
+          return;
+        }
+
+        if (userInfo.get('userType') === 'investor') {
+          router.push('/investor/companies/');
+        } else {
+          router.push('/founder/funds/');
         }
       }
     };
