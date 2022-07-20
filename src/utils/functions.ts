@@ -213,6 +213,7 @@ export const registerFounder = async (data: StartupFormValues, sub: string) => {
     userType: 'founder',
     companyId: company.id,
   });
+  return null;
 };
 
 export const registerInvestor = async (data: FundFormValues, sub: string) => {
@@ -269,6 +270,8 @@ export const registerInvestor = async (data: FundFormValues, sub: string) => {
     userType: 'investor',
     companyId: fund.id,
   });
+
+  return null;
 };
 
 export const getFileURL = async (
