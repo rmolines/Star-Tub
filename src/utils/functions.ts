@@ -2,6 +2,8 @@ import {
   addDoc,
   collection,
   doc,
+  DocumentData,
+  DocumentSnapshot,
   getDoc,
   getDocs,
   getFirestore,
@@ -227,8 +229,6 @@ export const registerInvestor = async (data: FundFormValues, sub: string) => {
     maxInvestment: parseInt(data.maxInvestment, 10),
   };
 
-  console.log(fundData);
-
   let fund = null;
 
   if (
@@ -269,4 +269,19 @@ export const registerInvestor = async (data: FundFormValues, sub: string) => {
     userType: 'investor',
     companyId: fund.id,
   });
+};
+
+export const getFileURL = async (
+  field: string,
+  company: DocumentSnapshot<DocumentData>
+) => {
+  let tempURL: string | undefined;
+  if (
+    company.get(field) &&
+    company.get(field).split('.').pop() !== 'undefined'
+  ) {
+    const iconRef = ref(getStorage(), company.get(field));
+    tempURL = await getDownloadURL(iconRef);
+  }
+  return tempURL;
 };

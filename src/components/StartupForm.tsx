@@ -7,7 +7,9 @@ import { useForm } from 'react-hook-form';
 
 import { useUserInfo } from '@/context/UserInfoContext';
 import { StartupFormValues } from '@/types/companyTypes';
+import { getFileURL } from '@/utils/functions';
 
+import PdfViewer from './PdfViewer';
 import { StageSelector } from './StageSelector';
 import StateSelect from './StateSelect';
 import { ThesisSelector } from './ThesisSelector';
@@ -20,7 +22,8 @@ export function StartupForm({
   onSubmit: (data: StartupFormValues) => any;
 }) {
   const { userInfo, loading } = useUserInfo();
-  const [preview, setPreview] = useState('');
+  const [logoURL, setLogoURL] = useState<string | undefined>('');
+  const [deckURL, setDeckURL] = useState<string | undefined>('');
   const [file, setFile] = useState<File>();
 
   const { register, handleSubmit, control, reset } =
@@ -43,8 +46,11 @@ export function StartupForm({
 
     if (companyInfo?.data()?.logoPath) {
       const iconRef = ref(getStorage(), companyInfo?.data()?.logoPath);
-      getDownloadURL(iconRef).then((URL) => setPreview(URL));
+      getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
     }
+
+    setLogoURL(await getFileURL('logoPath', companyInfo));
+    setDeckURL(await getFileURL('deckPath', companyInfo));
   };
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export function StartupForm({
     let objURL = '';
     if (file instanceof File) {
       objURL = URL.createObjectURL(file);
-      setPreview(objURL);
+      setLogoURL(objURL);
     }
 
     return () => {
@@ -72,10 +78,10 @@ export function StartupForm({
       <div className="mt-2 flex w-full justify-start gap-2">
         <div className="flex w-full flex-col">
           <label className="text-xs text-slate-600">Logo da Startup</label>
-          {preview !== '' && (
+          {logoURL !== '' && logoURL && (
             <div className="mt-2">
               <Image
-                src={preview}
+                src={logoURL}
                 placeholder={'blur'}
                 blurDataURL="https://blog.iprocess.com.br/wp-content/uploads/2021/11/placeholder.png"
                 width={75}
@@ -160,7 +166,9 @@ export function StartupForm({
         // }}
         accept="application/pdf"
       />
-
+      <div className="h-[40rem] py-8">
+        {deckURL && <PdfViewer file={deckURL} />}
+      </div>
       <input
         className="my-4 w-20 cursor-pointer rounded bg-slate-500 p-1 py-2 text-sm font-semibold text-white"
         type="submit"

@@ -32,7 +32,7 @@ function CompanyCard({
   }, [company]);
 
   return (
-    <div className="flex h-full flex-col justify-between gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow">
+    <div className="flex h-full flex-col justify-start gap-2 rounded bg-white p-4 text-slate-900 shadow drop-shadow">
       <div className="flex w-full items-center justify-between gap-4">
         <div className="flex items-center justify-center gap-2">
           <div className="relative">
@@ -62,7 +62,7 @@ function CompanyCard({
           <GoLinkExternal />
         </div>
       </div>
-      <div className="flex h-full w-full gap-x-2 text-sm">
+      <div className="flex w-full gap-x-2 text-sm">
         <div>
           <div className="rounded">
             {/* <label className="flex items-center gap-1 text-xs font-bold text-slate-700">

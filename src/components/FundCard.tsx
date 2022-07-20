@@ -157,9 +157,9 @@ function FundCard({
           </div>
         </div>
       </div>
-      <div className="flex cursor-pointer justify-center rounded bg-slate-500 py-1.5 font-semibold text-neutral-50">
+      {/* <div className="flex cursor-pointer justify-center rounded bg-slate-500 py-1.5 font-semibold text-neutral-50">
         Solicitar Intro
-      </div>
+      </div> */}
     </div>
   );
 }

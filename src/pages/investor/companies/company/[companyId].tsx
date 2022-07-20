@@ -5,7 +5,6 @@ import {
   getDoc,
   getFirestore,
 } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -18,6 +17,7 @@ import { GrLocation, GrTechnology } from 'react-icons/gr';
 
 import PdfViewer from '@/components/PdfViewer';
 import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
+import { getFileURL } from '@/utils/functions';
 
 export default function Company() {
   const router = useRouter();
@@ -58,20 +58,8 @@ export default function Company() {
 
     // setQuestionsData(questions);
 
-    const getFileURL = async (field: string) => {
-      let tempURL: string | undefined;
-      if (
-        company.get(field) &&
-        company.get(field).split('.').pop() !== 'undefined'
-      ) {
-        const iconRef = ref(getStorage(), company.get(field));
-        tempURL = await getDownloadURL(iconRef);
-      }
-      return tempURL;
-    };
-
-    setLogoURL(await getFileURL('logoPath'));
-    setDeckURL(await getFileURL('deckPath'));
+    setLogoURL(await getFileURL('logoPath', company));
+    setDeckURL(await getFileURL('deckPath', company));
 
     setLoading(false);
   };
@@ -194,7 +182,9 @@ export default function Company() {
                 </div>
               </div>
             </div>
-            {deckURL && <PdfViewer file={deckURL} />}
+            <div className="h-full pb-16">
+              {deckURL && <PdfViewer file={deckURL} />}
+            </div>
 
             {/* FAQ */}
             {/* <div className="">

@@ -22,6 +22,11 @@ const PdfViewer = ({ file }: { file: string }) => {
               'leftPanelButton',
               'toggleNotesButton',
               'toolsHeader',
+              'thumbnailControl',
+              'contextMenuPopup',
+              'downloadButton',
+              'printButton',
+              'languageButton',
             ],
           },
           viewer.current
@@ -33,7 +38,7 @@ const PdfViewer = ({ file }: { file: string }) => {
 
   return (
     <div
-      className="webviewer h-4/5"
+      className="webviewer h-full"
       ref={viewer}
       // style={{ height: '100vh' }}
     >

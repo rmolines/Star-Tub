@@ -58,11 +58,12 @@
     "react-pdf": "^5.7.2",
     "react-select": "^5.4.0",
     "react-textarea-autosize": "^8.3.4",
+    "sharp": "^0.30.7",
     "stable": "^0.1.8",
     "superagent": "^8.0.0",
+    "tailwindcss": "^3.1.6",
     "uuid": "^8.3.2",
-    "uuidv4": "^6.2.13",
-    "tailwindcss": "^3.1.6"
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.2.2",
