@@ -38,7 +38,7 @@ export function ControllerSelectNew({
             placeholder="Selecionar..."
             isMulti={isMulti}
             isDisabled={disabled}
-            isSearchable={false}
+            isSearchable
             className="text-sm text-slate-700 selection:border-none"
             options={values}
           />
