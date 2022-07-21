@@ -40,7 +40,7 @@ const EditingBox = (props: Props) => {
     <Card>
       <CardHeader>
         <TextareaAutosize
-          className={`w-full border-b-1 pb-2 border-slate-300 bg-slate-100 text-sm font-semibold text-slate-800 border-0`}
+          className={`w-full border-0 border-b-1 border-slate-300 bg-slate-100 pb-2 text-sm font-semibold text-slate-800`}
           defaultValue={`${props.question}`}
           onChange={(e) => {
             setQuestion(e.target.value);

@@ -20,7 +20,7 @@ function Editor(props: Props) {
 
   return (
     <article
-      className={`prose prose-sm prose-slate max-w-full break-all ${
+      className={`prose-sm prose prose-slate max-w-full break-all ${
         props.unanswered ? 'border-b-1 border-slate-300 outline-none' : ''
       }${props.editing ? 'border-b-1 border-slate-300' : ''}`}
     >

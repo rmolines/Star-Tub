@@ -1,4 +1,4 @@
-import { useUser } from '@auth0/nextjs-auth0';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -9,7 +9,7 @@ import { registerFounder, registerInvestor } from '@/utils/functions';
 
 import { StartupForm } from '../../components/StartupForm';
 
-function CompleteRegistration() {
+export default withPageAuthRequired(function CompleteRegistration() {
   const [userType] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
@@ -76,6 +76,4 @@ function CompleteRegistration() {
       <LoadingSpinner isOpen={isOpen} />
     </div>
   );
-}
-
-export default CompleteRegistration;
+});

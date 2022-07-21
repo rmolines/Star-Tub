@@ -52,9 +52,11 @@ export function ProfileForm() {
           doc(getFirestore(app), `companies/${userInfoShadow.get('companyId')}`)
         );
       } else {
-        await deleteDoc(
+        console.log('ola');
+        const t = await deleteDoc(
           doc(getFirestore(app), `funds/${userInfoShadow.get('companyId')}`)
         );
+        console.log(t);
       }
       await deleteDoc(doc(getFirestore(app), `users/${sub}`));
       router.push('/api/auth/logout/');
@@ -74,13 +76,16 @@ export function ProfileForm() {
   const onSubmit = (data: ProfileFormValues) => updateUser(data);
 
   return (
-    <div className="mt-8 md:px-20">
+    <div className="mx-auto mt-8 flex flex-col items-start md:px-20">
       {user && (
         <>
-          <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="flex w-full max-w-xl flex-col"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             {/* register your input into the hook by invoking the "register" function */}
-            {/* <div className="flex justify-center gap-2">
-              <div className="flex w-1/2 flex-col">
+            <div className="flex w-full justify-center gap-2">
+              <div className="flex w-full flex-col">
                 <label className="text-sm">First Name</label>
                 <input
                   type="text"
@@ -88,7 +93,7 @@ export function ProfileForm() {
                   className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
                 />
               </div>
-              <div className="flex w-1/2 flex-col">
+              <div className="flex w-full flex-col">
                 <label className="text-sm">Last Name</label>
                 <input
                   type="text"
@@ -96,9 +101,9 @@ export function ProfileForm() {
                   className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
                 />
               </div>
-            </div> */}
+            </div>
 
-            <div className="mt-2 flex w-full flex-col">
+            <div className="mt-2 flex w-full flex-col disabled:bg-slate-50">
               <label className="text-sm">E-mail</label>
               <input
                 type="email"
@@ -106,7 +111,7 @@ export function ProfileForm() {
                 {...register('email', {
                   required: true,
                 })}
-                className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700"
+                className="w-full rounded border-1 border-slate-300 py-1 px-2 text-sm text-slate-700 disabled:bg-slate-100"
               />
             </div>
 

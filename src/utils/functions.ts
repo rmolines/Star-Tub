@@ -20,6 +20,7 @@ import { app } from 'firebaseConfig';
 import { SetStateAction } from 'react';
 
 import {
+  EVCFFormValues,
   FilterDataType,
   FundFormValues,
   StartupFormValues,
@@ -269,8 +270,20 @@ export const registerInvestor = async (data: FundFormValues, sub: string) => {
   await setDoc(doc(getFirestore(app), 'users', sub), {
     userType: 'investor',
     companyId: fund.id,
+    firstName: data.firstName,
+    lastName: data.lastName,
   });
 
+  return null;
+};
+
+export const registerEVCF = async (data: EVCFFormValues, sub: string) => {
+  await setDoc(doc(getFirestore(app), 'users', sub), {
+    userType: 'investor',
+    companyId: data.fund.value,
+    firstName: data.firstName,
+    lastName: data.lastName,
+  });
   return null;
 };
 

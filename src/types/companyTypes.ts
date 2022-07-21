@@ -11,6 +11,8 @@ export type StartupFormValues = {
 };
 
 export type FundFormValues = {
+  firstName: string;
+  lastName: string;
   name: string;
   description: string;
   stage: { value: string; label: string }[];
@@ -20,6 +22,11 @@ export type FundFormValues = {
   logo: FileList;
   minInvestment: string;
   maxInvestment: string;
+};
+export type EVCFFormValues = {
+  firstName: string;
+  lastName: string;
+  fund: { value: string; label: string };
 };
 
 export type CompanyDictType = {
