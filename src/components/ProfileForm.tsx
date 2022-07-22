@@ -52,11 +52,9 @@ export function ProfileForm() {
           doc(getFirestore(app), `companies/${userInfoShadow.get('companyId')}`)
         );
       } else {
-        console.log('ola');
-        const t = await deleteDoc(
+        await deleteDoc(
           doc(getFirestore(app), `funds/${userInfoShadow.get('companyId')}`)
         );
-        console.log(t);
       }
       await deleteDoc(doc(getFirestore(app), `users/${sub}`));
       router.push('/api/auth/logout/');

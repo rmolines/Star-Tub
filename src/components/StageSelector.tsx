@@ -6,7 +6,18 @@ import { Control } from 'react-hook-form';
 
 import { ControllerSelect } from './ControllerSelect';
 
-export const stages = ['Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+'];
+export const stages = [
+  'Anjo',
+  'Pre Seed',
+  'Seed',
+  'Series A',
+  'Series B',
+  'Series C',
+  'Aceleração',
+  'Series D',
+  'Series E+',
+  'Venture Debt',
+];
 
 export function StageSelector<Type>({
   control,

@@ -102,6 +102,7 @@ export const populateFunds = async (d: any) => {
   const stage = await getDocs(query(collection(getFirestore(app), 'stages')));
   const typesList: { value: string; label: string }[] = [];
   const thesisList: { value: string; label: string }[] = [];
+  const stagesList: { value: string; label: string }[] = [];
 
   const getTypes = () => {
     const promises: Promise<unknown>[] = [];
@@ -171,8 +172,43 @@ export const populateFunds = async (d: any) => {
     return promises;
   };
 
+  const getStages = () => {
+    const promises: Promise<unknown>[] = [];
+
+    stages.forEach((element) => {
+      promises.push(
+        new Promise((resolve) => {
+          getDocs(
+            query(
+              collection(getFirestore(app), 'stages'),
+              where('value', '==', element)
+            )
+          ).then((docs) => {
+            if (docs.empty) {
+              addDoc(collection(getFirestore(app), 'stages'), {
+                value: element,
+              }).then((value) => {
+                stagesList.push({ value: value.id, label: element });
+                resolve('resolved');
+              });
+            } else {
+              stagesList.push({
+                value: docs.docs[0]?.id,
+                label: docs.docs[0]?.get('value'),
+              });
+              resolve('resolved');
+            }
+          });
+        })
+      );
+    });
+
+    return promises;
+  };
+
   await Promise.all(getTypes());
   await Promise.all(getThesis());
+  await Promise.all(getStages());
 
   addDoc(collection(getFirestore(app), 'funds'), {
     name,
@@ -181,14 +217,8 @@ export const populateFunds = async (d: any) => {
     avgInvestment,
     types: typesList,
     thesis: thesisList,
-    stage: stages.reduce((result, e) => {
-      stage.docs.forEach((doc) => {
-        if (doc.get('value') === e)
-          result.push({ value: doc.id, label: doc.get('value') });
-      });
-      return result;
-    }, []),
-  });
+    stage: stagesList
+  })
 };
 
 export const populate = async (elements: string[], collectionvalue: string) => {
@@ -204,7 +234,8 @@ export const changePopulateHandler = async (event: any) => {
   // Passing file data (event.target.files[0]) to parse using Papa.parse
   const resolvePromises = async (results) => {
     for (const result of results.data) {
-      await populateFunds(result);
+      console.log(result)
+      populateFunds(result);
     }
   };
 
@@ -218,9 +249,5 @@ export const changePopulateHandler = async (event: any) => {
 };
 
 export const populateInfos = () => {
-  populate(tech, 'tech');
-  populate(sectors, 'sectors');
-  populate(states, 'states');
   populate(stages, 'stages');
-  populate(models, 'models');
 };

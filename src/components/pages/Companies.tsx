@@ -18,7 +18,7 @@ export default function Companies() {
   const { companyInfo, loading } = useUserInfo();
 
   const initialData =
-    userType === 'founder' && !loading
+    userType === 'founder' && !loading && companyInfo.exists()
       ? {
           stage: companyInfo.get('stage'),
           thesis: companyInfo.get('thesis'),
@@ -38,6 +38,10 @@ export default function Companies() {
     }
   }, [filterData, viewType, loading]);
 
+  useEffect(() => {
+    // populateInfos();
+  }, []);
+
   return (
     <DashboardLayout
       type={userType === 'investor' ? LayoutType.investor : LayoutType.founder}
@@ -55,7 +59,7 @@ export default function Companies() {
           com perfil de investir na/o {companyInfo.get('name')}.
         </div>
       )}
-      <div className="grid grid-cols-cards gap-4">
+      <div className="mb-8 grid grid-cols-cards gap-4">
         {/* <input type="file" onChange={changePopulateHandler} /> */}
         {companiesState &&
           companiesState.map((company) =>
