@@ -28,11 +28,15 @@ export default withPageAuthRequired(function CompleteRegistration() {
     <div className="flex h-screen justify-center bg-slate-50 p-4">
       <div className="my-10 h-fit w-fit max-w-2xl rounded bg-white p-10 shadow">
         {/* <h1 className="ml-5 text-lg italic text-slate-700">star tub</h1> */}
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           {/* <Image src="/logo.png" width="64" height="64" /> */}
           <h1 className=" text-xl font-semibold text-slate-700">
-            Finalize o cadastro de sua startup!
+            Cadastre sua startup!
           </h1>
+          {/* <button className="flex cursor-pointer items-center justify-between gap-2 rounded  bg-slate-600 px-2 py-1 text-sm text-white">
+            Investidor
+            <GoArrowRight />
+          </button> */}
         </div>
 
         {/* <div className="mt-6 flex justify-center">

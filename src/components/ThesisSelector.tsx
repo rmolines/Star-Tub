@@ -36,7 +36,7 @@ export function ThesisSelector<Type>({
       isMulti={isMulti}
       isFund={isFund}
       values={values}
-      label="Teses de Interesse"
+      label="Teses da Empresa"
       name="thesis"
       disabled={disabled}
     />
