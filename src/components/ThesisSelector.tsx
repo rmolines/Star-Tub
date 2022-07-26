@@ -1,4 +1,10 @@
-import { collection, getFirestore, orderBy, query } from 'firebase/firestore';
+import {
+  collection,
+  getFirestore,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { Control } from 'react-hook-form';
@@ -17,7 +23,12 @@ export function ThesisSelector<Type>({
   disabled?: boolean;
 }) {
   const [values] = useCollection(
-    query(collection(getFirestore(app), 'thesis'), orderBy('value'))
+    query(
+      collection(getFirestore(app), 'thesis'),
+      where('value', '!=', 'Todos os Setores e Tecnologias'),
+      where('value', '!=', ''),
+      orderBy('value')
+    )
   );
 
   return (
