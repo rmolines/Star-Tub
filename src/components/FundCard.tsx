@@ -1,11 +1,21 @@
 import Dinero from 'dinero.js';
-import { QueryDocumentSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  query,
+  QueryDocumentSnapshot,
+  where,
+} from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { app } from 'firebaseConfig';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { BsCurrencyDollar } from 'react-icons/bs';
 import { GiProgression } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
+
+import { useUserInfo } from '@/context/UserInfoContext';
 
 function FundCard({
   company: fund,
@@ -14,6 +24,9 @@ function FundCard({
   id: string;
 }) {
   const [logoURL, setLogoURL] = useState<string | undefined>(undefined);
+  const [fundEmail, setFundEmail] = useState(undefined);
+  const [analystName, setAnalystName] = useState(undefined);
+  const { companyInfo } = useUserInfo();
 
   useEffect(() => {
     if (fund) {
@@ -28,6 +41,20 @@ function FundCard({
           setLogoURL(undefined);
         }
       };
+      const getAnalystEmail = async () => {
+        const email = await getDocs(
+          query(
+            collection(getFirestore(app), 'analysts'),
+            where('fundId', '==', fund.id)
+          )
+        );
+
+        if (email.docs.length > 0) {
+          setFundEmail(email.docs[0]?.get('email'));
+          setAnalystName(email.docs[0]?.get('name'));
+        }
+      };
+      getAnalystEmail();
       getLogoURL();
     }
   }, [fund]);
@@ -157,9 +184,22 @@ function FundCard({
           </div>
         </div>
       </div>
-      {/* <div className="flex cursor-pointer justify-center rounded bg-slate-500 py-1.5 font-semibold text-neutral-50">
-        Solicitar Intro
-      </div> */}
+      {fundEmail && (
+        <a
+          href={`mailto:${fundEmail}?subject=${encodeURIComponent(
+            'Intro Matchmaking EVCF'
+          )}&body=${encodeURIComponent(
+            `Olá, ${analystName}, demos match na plataforma de matchmaking do Emerging VC Fellows e gostaria de marcar uma conversa para apresentar minha startup, ${companyInfo.get(
+              'name'
+            )}. Para ver mais informações, acesse <a>https://projectclam.com/share/${
+              companyInfo.id
+            }/</a>`
+          )}`}
+          className="flex cursor-pointer justify-center rounded bg-slate-500 py-1.5 font-semibold text-neutral-50 hover:border-none"
+        >
+          Solicitar Intro
+        </a>
+      )}
     </div>
   );
 }

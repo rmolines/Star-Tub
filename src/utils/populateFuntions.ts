@@ -7,6 +7,7 @@ import { sectors } from '@/components/SectorSelect';
 import { stages } from '@/components/StageSelector';
 import { states } from '@/components/StateSelect';
 import { tech } from '@/components/ThesisSelector';
+import { NOMEM } from 'dns';
 import { getDocs, query, collection, getFirestore, where, addDoc } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { type } from 'os';
@@ -221,6 +222,23 @@ export const populateFunds = async (d: any) => {
   })
 };
 
+export const populateAnalysts = async (d: any) => {
+  const gestora = d['Gestora (fx)']
+  const nome = d.Nome
+  const email = d['Email Profissional (para networking profissional com os fellows)']
+
+  const fundDoc = await getDocs(query(collection(getFirestore(app), 'funds'), where('name', '==', gestora)));
+
+  if (fundDoc.docs.length > 0) {
+    await addDoc(collection(getFirestore(app), 'analysts'), {
+      name: nome,
+      fundId: fundDoc.docs[0]?.id,
+      email
+    })
+  }
+
+}
+
 export const populate = async (elements: string[], collectionvalue: string) => {
   elements.forEach((e, ind) => {
     addDoc(collection(getFirestore(app), collectionvalue), {
@@ -235,7 +253,7 @@ export const changePopulateHandler = async (event: any) => {
   const resolvePromises = async (results) => {
     for (const result of results.data) {
       console.log(result)
-      populateFunds(result);
+      populateAnalysts(result);
     }
   };
 

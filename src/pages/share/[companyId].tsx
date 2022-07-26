@@ -8,16 +8,15 @@ import {
 } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { BiLeftArrowAlt } from 'react-icons/bi';
 import { BsLinkedin } from 'react-icons/bs';
 import { GiProgression } from 'react-icons/gi';
 import { GoLinkExternal } from 'react-icons/go';
 import { GrLocation, GrTechnology } from 'react-icons/gr';
 
 import PdfViewer from '@/components/PdfViewer';
-import { DashboardLayout, LayoutType } from '@/templates/DashboardLayout';
 import { getFileURL } from '@/utils/functions';
 
 export default withPageAuthRequired(function Company() {
@@ -72,18 +71,12 @@ export default withPageAuthRequired(function Company() {
   }, [router.query]);
 
   return (
-    <DashboardLayout type={LayoutType.investor}>
+    <div className="mx-auto flex h-screen max-w-4xl items-start justify-center pt-8">
       {!loading && companyData && (
-        <div className="flex grow flex-col">
+        <div className="flex h-full grow flex-col">
           <div className="mb-8 px-8">
             <div className="mb-4 flex items-center justify-between gap-4 pr-4">
               <div className="flex items-center gap-4">
-                <div
-                  className="cursor-pointer rounded-full text-3xl text-slate-400 hover:text-slate-700"
-                  onClick={() => router.back()}
-                >
-                  <BiLeftArrowAlt />
-                </div>
                 {logoURL ? (
                   <Image
                     src={logoURL}
@@ -138,6 +131,15 @@ export default withPageAuthRequired(function Company() {
                     <GoLinkExternal />
                   </a>
                 )}
+                <Link
+                  target="_blank"
+                  href={`/investor/registration/`}
+                  rel="noreferrer"
+                >
+                  <a className="flex cursor-pointer items-center gap-1 rounded bg-orange-500 px-2 py-1 text-sm font-semibold text-white hover:border-none">
+                    Sign up!
+                  </a>
+                </Link>
               </div>
             </div>
             <div className="mx-6 border-l-2 border-slate-400 px-2 text-sm italic">
@@ -234,6 +236,6 @@ export default withPageAuthRequired(function Company() {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </div>
   );
 });

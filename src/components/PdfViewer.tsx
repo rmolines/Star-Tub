@@ -36,15 +36,7 @@ const PdfViewer = ({ file }: { file: string }) => {
     loadWebViewer();
   }, []);
 
-  return (
-    <div
-      className="webviewer h-full"
-      ref={viewer}
-      // style={{ height: '100vh' }}
-    >
-      {/* <div className="header">React sample</div> */}
-    </div>
-  );
+  return <div className="webviewer h-full grow" ref={viewer} />;
 };
 
 export default PdfViewer;

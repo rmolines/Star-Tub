@@ -57,7 +57,6 @@ const investorMenuItems = [
 const DashboardLayout = (props: IMainProps) => {
   const router = useRouter();
   const { companyInfo, logoURL } = useUserInfo();
-
   const [showSideBar, setShowSideBar] = useState(false);
 
   const menuItems = {
@@ -70,11 +69,11 @@ const DashboardLayout = (props: IMainProps) => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-start font-sora">
       <Meta title="Clam" description="Investor relations made easy" />
-      <div className="flex w-screen max-w-screen-xl grow flex-col justify-center md:flex-row">
+      <div className="flex w-screen max-w-screen-xl grow flex-row justify-start">
         <aside
           className={`${
             showSideBar ? 'translate-x-0' : '-translate-x-full'
-          } fixed left-0 z-10 flex grow flex-col items-center bg-white shadow-lg drop-shadow-lg transition-transform duration-300 md:relative md:w-72 md:translate-x-0 md:bg-white md:shadow-none md:drop-shadow-none`}
+          } fixed top-0 z-20 flex h-full w-fit grow flex-col items-center bg-white shadow-lg drop-shadow-lg transition-transform duration-300 md:relative md:w-72 md:translate-x-0 md:bg-white md:shadow-none md:drop-shadow-none`}
         >
           <nav className="sticky top-0 p-6">
             <ul className="">
@@ -178,7 +177,13 @@ const DashboardLayout = (props: IMainProps) => {
             </ul>
           </nav>
         </aside>
-        <main className="flex w-full flex-col px-6 antialiased">
+        {showSideBar && (
+          <div
+            onClick={() => setShowSideBar(false)}
+            className="fixed top-0 z-10 h-full w-full bg-slate-900/30"
+          ></div>
+        )}
+        <main className="flex w-full grow flex-col px-6 antialiased">
           <div className="mx-auto flex w-full grow flex-col">
             <div className="mb-4 flex items-center gap-2 pt-5">
               <button
@@ -199,7 +204,9 @@ const DashboardLayout = (props: IMainProps) => {
             </div>
 
             {/* Children */}
-            <div className="flex grow flex-col md:px-4">{props.children}</div>
+            <div className="flex grow flex-col justify-start md:px-4">
+              {props.children}
+            </div>
 
             {/* Footer */}
             {/* <div className="sticky border-t border-slate-300 py-8 text-center text-sm">
