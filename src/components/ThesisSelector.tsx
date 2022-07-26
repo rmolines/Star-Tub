@@ -26,7 +26,6 @@ export function ThesisSelector<Type>({
     query(
       collection(getFirestore(app), 'thesis'),
       where('value', '!=', 'Todos os Setores e Tecnologias'),
-      where('value', '!=', ''),
       orderBy('value')
     )
   );
