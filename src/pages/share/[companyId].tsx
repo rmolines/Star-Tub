@@ -1,3 +1,4 @@
+import { useUser } from '@auth0/nextjs-auth0';
 import {
   doc,
   DocumentData,
@@ -28,6 +29,7 @@ export default function Company() {
   //   useState<QuerySnapshot<DocumentData> | null>(null);
   const [logoURL, setLogoURL] = useState<string | undefined>('');
   const [deckURL, setDeckURL] = useState<string | undefined>('');
+  const { user, error, isLoading } = useUser();
 
   // const createQuestion = async (question: String) => {
   //   await addDoc(collection(getFirestore(app), 'questions'), {
@@ -64,10 +66,16 @@ export default function Company() {
   };
 
   useEffect(() => {
-    if (typeof router.query.companyId === 'string') {
-      getCompanyInfo(router.query.companyId);
+    if (!isLoading) {
+      if (typeof router.query.companyId === 'string') {
+        if (user) {
+          router.push(`/investor/companies/company/${router.query.companyId}`);
+        } else {
+          getCompanyInfo(router.query.companyId);
+        }
+      }
     }
-  }, [router.query]);
+  }, [router.query, user, isLoading, error]);
 
   return (
     <div className="mx-auto flex h-screen max-w-4xl items-start justify-center pt-8">
@@ -190,48 +198,48 @@ export default function Company() {
 
             {/* FAQ */}
             {/* <div className="">
-              <div className="mt-8">
-                <div className="flex items-center justify-start gap-4">
+                  <div className="mt-8">
+                  <div className="flex items-center justify-start gap-4">
                   <h1 className="text-xl font-semibold">Perguntas</h1>
-
+                  
                   <div className="flex items-center text-2xl">
-                    <BsPlusCircle
-                      onClick={() => {
-                        setCreatingQuestion(true);
-                      }}
-                      className="cursor-pointer text-slate-300 hover:text-slate-800"
-                    />
+                  <BsPlusCircle
+                  onClick={() => {
+                    setCreatingQuestion(true);
+                  }}
+                  className="cursor-pointer text-slate-300 hover:text-slate-800"
+                  />
                   </div>
-                </div>
-
-                {creatingQuestion && (
-                  <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
+                  </div>
+                  
+                  {creatingQuestion && (
+                    <div className="my-6 mx-2 border-b-1 border-slate-200 pb-4">
                     <div className="font-semibold">Nova pergunta</div>
                     <span>
-                      <NewQuestion
-                        submitFunc={createQuestion}
-                        cancelFunc={setCreatingQuestion}
-                      />
+                    <NewQuestion
+                    submitFunc={createQuestion}
+                    cancelFunc={setCreatingQuestion}
+                    />
                     </span>
-                  </div>
-                )}
-
-                {!questionsData?.empty && (
-                  <span>
-                    {questionsData?.docs.map((docShadow, index) => (
-                      <QuestionBox
+                    </div>
+                    )}
+                    
+                    {!questionsData?.empty && (
+                      <span>
+                      {questionsData?.docs.map((docShadow, index) => (
+                        <QuestionBox
                         key={docShadow.id}
                         id={docShadow.id}
                         index={index}
                         question={docShadow.get('question')}
                         answer={docShadow.get('answer')}
                         unanswered={false}
-                      />
-                    ))}
-                  </span>
-                )}
-              </div>
-            </div> */}
+                        />
+                        ))}
+                        </span>
+                        )}
+                        </div>
+                      </div> */}
           </div>
         </div>
       )}
