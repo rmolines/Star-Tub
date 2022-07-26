@@ -1,4 +1,3 @@
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import {
   doc,
   DocumentData,
@@ -19,7 +18,7 @@ import { GrLocation, GrTechnology } from 'react-icons/gr';
 import PdfViewer from '@/components/PdfViewer';
 import { getFileURL } from '@/utils/functions';
 
-export default withPageAuthRequired(function Company() {
+export default function Company() {
   const router = useRouter();
   const [companyData, setCompanyData] =
     useState<DocumentSnapshot<DocumentData> | null>(null);
@@ -238,4 +237,4 @@ export default withPageAuthRequired(function Company() {
       )}
     </div>
   );
-});
+}
