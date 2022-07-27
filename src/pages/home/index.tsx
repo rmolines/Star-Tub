@@ -37,7 +37,7 @@ export default function Example() {
           </div>
           <button
             onClick={() => router.push('/')}
-            className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-700 to-clam-400 px-8 py-4 font-normal tracking-wide text-white outline-none"
+            className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-700 to-clam-500 px-8 py-4 font-normal tracking-wide text-white outline-none"
           >
             Cadastre sua Startup Aqui!
           </button>
