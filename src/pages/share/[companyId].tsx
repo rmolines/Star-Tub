@@ -69,6 +69,7 @@ export default function Company() {
     if (!isLoading) {
       if (typeof router.query.companyId === 'string') {
         if (user) {
+          // fix when user is founder not investor
           router.push(`/investor/companies/company/${router.query.companyId}`);
         } else {
           getCompanyInfo(router.query.companyId);
