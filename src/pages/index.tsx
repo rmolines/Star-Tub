@@ -1,4 +1,4 @@
-import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useUser } from '@auth0/nextjs-auth0';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
@@ -6,13 +6,14 @@ import { useEffect } from 'react';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default withPageAuthRequired(function Index() {
-  const { user } = useUser();
+export default function Index() {
+  const { user, isLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     const getInfo = async () => {
       if (user && user.sub) {
+        console.log(isLoading, user);
         const userInfo = await getDoc(
           doc(getFirestore(app), 'users', user.sub)
         );
@@ -40,10 +41,14 @@ export default withPageAuthRequired(function Index() {
         } else {
           router.push('/founder/funds/');
         }
+      } else {
+        router.push('/home');
       }
     };
-    getInfo();
-  }, [user]);
+    if (!isLoading) {
+      getInfo();
+    }
+  }, [isLoading]);
 
   return <LoadingSpinner isOpen />;
-});
+}

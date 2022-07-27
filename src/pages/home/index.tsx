@@ -16,7 +16,7 @@ export default function Example() {
           </div>
           <div className="flex items-center justify-center">
             <button
-              onClick={() => router.push('/')}
+              onClick={() => router.push('/api/auth/login')}
               className="rounded-3xl bg-gradient-to-b from-gray-900 to-black px-6 py-3 font-medium text-white outline-none"
             >
               Login
@@ -36,7 +36,7 @@ export default function Example() {
             startup.
           </div>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/api/auth/login')}
             className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-700 to-clam-500 px-8 py-4 font-normal tracking-wide text-white outline-none"
           >
             Cadastre sua Startup Aqui!
