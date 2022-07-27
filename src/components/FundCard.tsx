@@ -191,9 +191,9 @@ function FundCard({
           )}&body=${encodeURIComponent(
             `Olá, ${analystName}, demos match na plataforma de matchmaking do Emerging VC Fellows e gostaria de marcar uma conversa para apresentar minha startup, ${companyInfo.get(
               'name'
-            )}. Para ver mais informações, acesse <a>https://projectclam.com/share/${
+            )}. Para ver mais informações, acesse https://projectclam.com/share/${
               companyInfo.id
-            }/</a>`
+            }/`
           )}`}
           className="flex cursor-pointer justify-center rounded bg-slate-500 py-1.5 font-semibold text-neutral-50 hover:border-none"
         >
