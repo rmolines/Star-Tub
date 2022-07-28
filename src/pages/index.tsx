@@ -1,54 +1,59 @@
-import { useUser } from '@auth0/nextjs-auth0';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { app } from 'firebaseConfig';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 
-import LoadingSpinner from '@/components/LoadingSpinner';
-
-export default function Index() {
-  const { user, isLoading } = useUser();
+export default function Example() {
   const router = useRouter();
 
-  useEffect(() => {
-    const getInfo = async () => {
-      if (user && user.sub) {
-        console.log(isLoading, user);
-        const userInfo = await getDoc(
-          doc(getFirestore(app), 'users', user.sub)
-        );
+  return (
+    <div className="flex min-h-screen min-w-full flex-col items-center bg-white">
+      <div className="flex max-w-4xl grow flex-col justify-start p-8 xl:px-0">
+        {/* <!-- nav --> */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center gap-4 text-4xl font-semibold text-gray-900">
+              <img src="/clam.svg" className="w-12" alt="clam" />
+              Clam
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <button
+              onClick={() => router.push('/redirect')}
+              className="rounded-3xl bg-gradient-to-b from-gray-900 to-black px-6 py-3 font-medium text-white outline-none"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+        {/* <!-- /nav --> */}
 
-        if (!userInfo.exists()) {
-          router.push('/registration/completeRegistration/');
-          return;
-        }
+        {/* <!-- hero section --> */}
+        <div className="mx-auto flex grow flex-col justify-center text-left">
+          <div className="text-5xl font-semibold leading-none text-gray-900 lg:text-6xl">
+            Encontre. <br className="md:hidden" /> Converse.{' '}
+            <br className="md:hidden" /> Capte. <br />
+            Os melhores fundos de VC do Brasil em um só lugar.
+          </div>
+          <div className="text-true-gray-500 mt-6 text-xl font-light antialiased">
+            Aqui você encontra os melhores investidores pro futuro da sua
+            startup.
+          </div>
+          <button
+            onClick={() => router.push('/redirect')}
+            className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-600 to-clam-500 px-8 py-4 font-normal tracking-wide text-white outline-none"
+          >
+            Cadastre sua Startup Aqui!
+          </button>
+        </div>
+      </div>
 
-        const companyInfo = await getDoc(
-          doc(
-            getFirestore(app),
-            userInfo.get('userType') === 'investor' ? 'funds' : 'companies',
-            userInfo.get('companyId')
-          )
-        );
-
-        if (!companyInfo.exists()) {
-          router.push('/registration/completeRegistration/');
-          return;
-        }
-
-        if (userInfo.get('userType') === 'investor') {
-          router.push('/investor/companies/');
-        } else {
-          router.push('/founder/funds/');
-        }
-      } else {
-        router.push('/home');
-      }
-    };
-    if (!isLoading) {
-      getInfo();
-    }
-  }, [isLoading]);
-
-  return <LoadingSpinner isOpen />;
+      {/* <div className="flex h-60 w-screen justify-center bg-slate-500">
+        <div className="flex w-[72rem] items-center gap-8 px-8">
+          <img src={'/evcf.webp'} alt="EVCF" className="h-16" />
+          <img src={'/evcf.webp'} alt="EVCF" className="h-16" />
+          <img src={'/evcf.webp'} alt="EVCF" className="h-16" />
+          <img src={'/evcf.webp'} alt="EVCF" className="h-16" />
+        </div>
+      </div> */}
+      {/* <!-- /hero section --> */}
+    </div>
+  );
 }
