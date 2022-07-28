@@ -5,7 +5,7 @@ export default function Example() {
 
   return (
     <div className="flex min-h-screen min-w-full flex-col items-center bg-white">
-      <div className="flex max-w-6xl grow flex-col justify-start p-10 xl:px-0">
+      <div className="flex max-w-4xl grow flex-col justify-start p-8 xl:px-0">
         {/* <!-- nav --> */}
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center">
@@ -26,9 +26,10 @@ export default function Example() {
         {/* <!-- /nav --> */}
 
         {/* <!-- hero section --> */}
-        <div className="mt-20 flex grow flex-col justify-center text-left lg:mt-40 lg:ml-16">
-          <div className="text-5xl font-semibold leading-none text-gray-900 md:text-6xl">
-            Encontre. Converse. Capte. <br />
+        <div className="mx-auto flex grow flex-col justify-center text-left">
+          <div className="text-5xl font-semibold leading-none text-gray-900 lg:text-6xl">
+            Encontre. <br className="md:hidden" /> Converse.{' '}
+            <br className="md:hidden" /> Capte. <br />
             Os melhores fundos de VC do Brasil em um só lugar.
           </div>
           <div className="text-true-gray-500 mt-6 text-xl font-light antialiased">
@@ -37,7 +38,7 @@ export default function Example() {
           </div>
           <button
             onClick={() => router.push('/api/auth/login')}
-            className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-700 to-clam-500 px-8 py-4 font-normal tracking-wide text-white outline-none"
+            className="mt-6 w-fit rounded-full bg-gradient-to-b from-clam-600 to-clam-500 px-8 py-4 font-normal tracking-wide text-white outline-none"
           >
             Cadastre sua Startup Aqui!
           </button>
