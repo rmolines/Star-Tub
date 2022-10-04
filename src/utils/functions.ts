@@ -24,6 +24,7 @@ import {
   FilterDataType,
   FundFormValues,
   StartupFormValues,
+  StartupSimpleFormValues,
 } from '@/types/companyTypes';
 
 export const getCompanies = async (
@@ -123,6 +124,108 @@ export const getCompanies = async (
   }
 
   setCompaniesState(Object.values(companiesDocs));
+};
+export const getCompaniesSimple = async (
+  filterData: {
+    name: string;
+    url: string;
+    linkedin: string;
+    stage: null;
+    thesis: null;
+  },
+  setCompaniesState: (
+    value: SetStateAction<QueryDocumentSnapshot<unknown>[] | null>
+  ) => void
+) => {
+  let companiesStagePromises: Promise<QuerySnapshot<unknown>>[] = [];
+  let companiesThesisPromises: Promise<QuerySnapshot<unknown>>[] = [];
+  let companiesPromises: Promise<QuerySnapshot<unknown>>[] = [];
+  const companiesDocs: { [key: string]: QueryDocumentSnapshot<unknown> } = {};
+
+  const fundsAllThesis = await getDocs(
+    query(
+      collection(getFirestore(app), 'funds'),
+      where('thesis', 'array-contains', {
+        label: 'Todos os Setores e Tecnologias',
+        value: 'CC0gAoreoapMHhC4vLIS',
+      })
+    )
+  );
+
+  if (filterData && Object.entries(filterData).length > 0) {
+    Object.entries(filterData).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        companiesThesisPromises = [
+          getDocs(
+            query(
+              collection(getFirestore(app), 'funds'),
+              where(key, 'array-contains-any', value)
+            )
+          ),
+        ];
+      } else if (key === 'stage' && value !== null) {
+        companiesStagePromises = [
+          getDocs(
+            query(
+              collection(getFirestore(app), 'funds'),
+              where(key, 'array-contains', value)
+            )
+          ),
+        ];
+      }
+    });
+
+    let companiesThesis = await Promise.all(companiesThesisPromises);
+    const companiesStage = await Promise.all(companiesStagePromises);
+
+    companiesThesis = companiesThesis.concat(fundsAllThesis);
+
+    companiesThesis.forEach((company) => {
+      company.docs.forEach((docShadow) => {
+        companiesDocs[docShadow.get('name') + docShadow.id] = docShadow;
+      });
+    });
+
+    companiesStage.forEach((company) => {
+      Object.keys(companiesDocs).forEach((key) => {
+        if (
+          !company.docs
+            .map((docShadow) => docShadow.get('name') + docShadow.id)
+            .includes(key)
+        ) {
+          delete companiesDocs[key];
+        }
+      });
+    });
+  } else {
+    companiesPromises = [
+      getDocs(
+        query.apply(
+          this,
+          // @ts-ignore
+          [collection(getFirestore(app), 'funds'), orderBy('name')]
+        )
+      ),
+    ];
+    const companies = await Promise.all(companiesPromises);
+
+    companies.forEach((company) => {
+      company.docs.forEach((docShadow) => {
+        companiesDocs[docShadow.get('name') + docShadow.id] = docShadow;
+      });
+    });
+  }
+
+  const sorted = Object.keys(companiesDocs)
+    .sort()
+    .reduce((accumulator, key) => {
+      // @ts-ignore
+      accumulator[key] = companiesDocs[key];
+
+      return accumulator;
+    }, {});
+
+  setCompaniesState(Object.values(sorted));
 };
 
 export const getCompanyInfo = async (fundId: string) => {
@@ -239,6 +342,18 @@ export const registerFounder = async (data: StartupFormValues, sub: string) => {
     companyId: company.id,
   });
   return null;
+};
+
+export const registerStartupSimple = async (data: StartupSimpleFormValues) => {
+  const companyData = {
+    name: data.name,
+    ...(data.linkedin && { linkedin: data.linkedin }),
+    ...(data.url && { url: data.url }),
+    stage: data.stage,
+    thesis: data.thesis,
+  };
+
+  await addDoc(collection(getFirestore(app), 'companies'), companyData);
 };
 
 export const registerInvestor = async (data: FundFormValues, sub: string) => {

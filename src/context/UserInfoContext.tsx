@@ -11,6 +11,8 @@ import {
 } from 'react';
 import { useDocument } from 'react-firebase-hooks/firestore';
 
+import { StartupSimpleFormValues } from '@/types/companyTypes';
+
 // TODO melhorar defaults and merge user and userinfo contexts
 
 type UserInfoType = {
@@ -39,6 +41,40 @@ export function useUserInfo() {
   return useContext(UserInfoContext);
 }
 
+export const StartupInfoContext = createContext<StartupSimpleFormValues>({
+  name: '',
+  url: '',
+  linkedin: '',
+  stage: null,
+  thesis: null,
+  setData: () => {},
+});
+
+export function useStartupInfo() {
+  return useContext(StartupInfoContext);
+}
+
+export function StartupInfoProvider({ children }: { children: ReactNode }) {
+  const [data, setData] = useState({
+    name: '',
+    url: '',
+    linkedin: '',
+    stage: null,
+    thesis: null,
+  });
+
+  return (
+    <StartupInfoContext.Provider
+      value={{
+        ...data,
+        setData,
+      }}
+    >
+      {children}
+    </StartupInfoContext.Provider>
+  );
+}
+
 export function UserInfoProvider({ children }: { children: ReactNode }) {
   const { user, error: auth0Error, isLoading: auth0Loading } = useUser();
   const [userInfo, firbaseLoading, firebaseError] = useDocument(
@@ -65,11 +101,9 @@ export function UserInfoProvider({ children }: { children: ReactNode }) {
     if (companyInfo && companyInfo.get('logoPath')) {
       const getLogoURL = async () => {
         const iconRef = ref(getStorage(), companyInfo.get('logoPath'));
-        getDownloadURL(iconRef)
-          .then((URL) => setLogoURL(URL))
-          .catch((e) => console.log(e));
+        getDownloadURL(iconRef).then((URL) => setLogoURL(URL));
       };
-      getLogoURL().catch((e) => console.log(e));
+      getLogoURL();
     }
   }, [companyInfo]);
 

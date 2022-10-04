@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 export type StartupFormValues = {
   name: string;
   url: string;
@@ -8,6 +10,23 @@ export type StartupFormValues = {
   linkedin: string;
   logo: FileList;
   deck: FileList;
+};
+
+export type StartupSimpleFormValues = {
+  name: string;
+  url: string;
+  stage: { value: string; label: string } | null;
+  thesis: { value: string; label: string }[] | null;
+  linkedin: string;
+  setData: Dispatch<
+    SetStateAction<{
+      name: string;
+      url: string;
+      linkedin: string;
+      stage: null;
+      thesis: null;
+    }>
+  >;
 };
 
 export type FundFormValues = {

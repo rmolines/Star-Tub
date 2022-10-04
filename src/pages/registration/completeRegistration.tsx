@@ -66,8 +66,8 @@ export default withPageAuthRequired(function CompleteRegistration() {
             onSubmit={(data: StartupFormValues) => {
               if (user?.sub) {
                 setIsOpen(true);
-                registerFounder(data, user?.sub).then(() =>
-                  router.push('/founder/funds/')
+                registerFounder(data, user.sub).then(() =>
+                  router.push('/funds/')
                 );
               }
             }}
